@@ -7,7 +7,6 @@
     <title>Bunny</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
     <script>
-        // Función para cargar los datos desde el archivo JSON
         async function loadData() {
             try {
                 const response = await fetch('data.json');
@@ -17,7 +16,6 @@
                 return await response.json();
             } catch (error) {
                 console.error('Error cargando los datos:', error);
-                // Datos de respaldo en caso de error
                 return {
                     cards: [],
                     bencina: []
@@ -25,7 +23,6 @@
             }
         }
     </script>
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,300;0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;1,6..12,300;1,6..12,600&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
@@ -33,20 +30,11 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        * {
             -webkit-touch-callout: none;
-            /* iOS Safari */
             -webkit-user-select: none;
-            /* Safari */
             -moz-user-select: none;
-            /* Firefox */
             -ms-user-select: none;
-            /* Internet Explorer/Edge */
             user-select: none;
-            /* Navegadores modernos */
-
             outline: none;
             -webkit-tap-highlight-color: transparent;
         }
@@ -73,9 +61,13 @@
             width: 100%;
             z-index: 10;
             position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 30px;
+            box-sizing: border-box;
         }
 
-        /* Estilos para el carrusel de días con días más juntos */
         .day-carousel {
             display: flex;
             overflow-x: auto;
@@ -85,7 +77,6 @@
             scrollbar-width: none;
             justify-content: flex-start;
             gap: 10px;
-            /* Eliminar espacio entre botones */
             width: 100%;
         }
 
@@ -99,19 +90,14 @@
             cursor: pointer;
             transition: transform 0.2s;
             min-width: 52px;
-            /* Ligeramente más pequeño que original pero suficiente para el círculo */
             flex: 0 0 52px;
             margin: 0;
-            /* Eliminar márgenes */
             padding: 0;
-            /* Eliminar padding */
         }
 
         .day-circle {
             width: 50px;
-            /* Mantener tamaño original */
             height: 50px;
-            /* Mantener tamaño original */
             border-radius: 50%;
             background-color: #1A1A1A;
             border: 1px solid #3B3D3B;
@@ -146,7 +132,6 @@
             width: 100%;
         }
 
-        /* Mejora para las transiciones entre secciones */
         .content {
             position: relative;
             overflow-x: hidden;
@@ -176,7 +161,6 @@
             transform: translateY(20px);
             pointer-events: none;
             display: none;
-            /* Añadir display none para asegurar que está completamente oculto */
         }
 
         .section-active {
@@ -186,11 +170,10 @@
             position: relative !important;
             pointer-events: auto !important;
             display: block !important;
-            /* Asegurar que se muestra */
         }
 
-        /* Asegurarse que el home-section esté visible inicialmente */
-        #home-section.section-active {
+        #home-section.section-active,
+        #home-section {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
@@ -199,21 +182,11 @@
             display: block;
         }
 
-        /* Asegurarse que el home-section esté visible inicialmente */
-        #home-section {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-            position: relative;
-            pointer-events: auto;
-        }
-
         .home-section {
             padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 20px;
-            /* Espacio entre elementos */
             width: 100%;
         }
 
@@ -266,7 +239,6 @@
             position: relative;
         }
 
-        /* Estilos actualizados para el botón VIP y su animación */
         .vip-button-container {
             position: relative;
             width: 100%;
@@ -283,7 +255,6 @@
             position: relative;
             font-weight: bold;
             z-index: 1;
-            /* Asegurar que el botón esté por encima */
         }
 
         #lottie-confetti {
@@ -295,11 +266,9 @@
             transform: translateY(-50%);
             pointer-events: none;
             z-index: 999;
-            /* Aumentado */
             opacity: 1 !important;
             visibility: visible !important;
             display: block !important;
-            pointer-events: none;
         }
 
         #fullscreen-confetti {
@@ -310,16 +279,6 @@
             height: 100%;
             pointer-events: none;
             z-index: 9999;
-        }
-
-        /* Header y perfil */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 30px;
-            width: 100%;
-            box-sizing: border-box;
         }
 
         .profile {
@@ -367,11 +326,9 @@
             justify-content: center;
         }
 
-        /* Título de sección */
         .section-title {
             font-size: 20px;
             font-weight: bold;
-            /* margin: 10px 0 20px; */
             text-align: center;
             color: #ede7e3;
             width: 100%;
@@ -386,8 +343,6 @@
             width: 100%;
         }
 
-        /* Tarjeta de crédito destacada */
-        /* Ajustes para la tabla de tarjetas */
         .card-row {
             display: flex;
             justify-content: space-between;
@@ -405,29 +360,22 @@
             white-space: nowrap;
         }
 
-        /* Ajustar anchos específicos para cada columna */
         .card-row .card-column:nth-child(1) {
             flex: 2;
         }
 
-        /* Banco */
         .card-row .card-column:nth-child(2) {
             flex: 1;
         }
 
-        /* Tipo */
         .card-row .card-column:nth-child(3) {
             flex: 1;
         }
 
-        /* Nivel */
         .card-row .card-column:nth-child(4) {
             flex: 1.5;
         }
 
-        /* Números */
-
-        /* Modificar la tarjeta de crédito */
         .credit-card {
             background-color: #1A1A1A;
             border: 1px solid #3B3D3B;
@@ -438,14 +386,11 @@
             position: relative;
             overflow: hidden;
             transform: translateY(-10px);
-            /* Sube ligeramente la tarjeta */
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            /* Añade una sombra suave */
             width: 100%;
             box-sizing: border-box;
         }
 
-        /* Ajustar texto de la tarjeta */
         .card-balance {
             font-size: 14px;
             opacity: 0.8;
@@ -506,7 +451,6 @@
             background-color: #FF8AA2;
         }
 
-        /* Barra de búsqueda */
         .search-container {
             position: relative;
             margin: 20px 0;
@@ -541,7 +485,6 @@
             cursor: pointer;
         }
 
-        /* Carrusel de bancos */
         .bank-carousel {
             display: flex;
             gap: 15px;
@@ -574,15 +517,12 @@
             object-fit: cover;
         }
 
-        /* Tabla de tarjetas */
-        /* Estilos para contenedor común de tabla */
         .table-container {
             width: 100%;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* Estilos para el encabezado y filas de la tabla con grid templates idénticos */
         .table-header {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1fr 40px;
@@ -601,11 +541,9 @@
             text-align: left;
         }
 
-        /* Estilos para las filas de la tabla - exactamente el mismo grid-template que el header */
         .card-row {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1fr 40px;
-            /* IDÉNTICO al table-header */
             align-items: center;
             padding: 15px 0;
             border-bottom: 1px solid #242434;
@@ -621,7 +559,6 @@
             text-align: left;
         }
 
-        /* Estilo para el botón de copiar */
         .copy-button {
             background: none;
             border: none;
@@ -632,7 +569,6 @@
             justify-content: center;
         }
 
-        /* Botón flotante para agregar */
         .message-button {
             position: fixed;
             bottom: 90px;
@@ -651,24 +587,16 @@
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
             z-index: 10;
             padding: 0;
-            /* Remove any padding */
             overflow: hidden;
-            /* Ensure content doesn't overflow */
         }
 
-        /* SVG styling for proper centering */
         .message-button svg {
             width: 25px;
-            /* Set appropriate width */
             height: 25px;
-            /* Set appropriate height */
             display: block;
-            /* Remove any extra space */
             transform: scale(1.2);
-            /* Slightly increase size if needed */
         }
 
-        /* Navbar */
         .navbar {
             position: fixed;
             bottom: 0;
@@ -718,7 +646,6 @@
             opacity: 0.7;
         }
 
-        /* Estilo específico para la sección de info */
         body.info-active {
             background: #ede7e3;
         }
@@ -728,7 +655,6 @@
         }
 
         #info-section {
-            /* padding-top: 30px; */
             text-align: center;
         }
 
@@ -742,10 +668,7 @@
 
         #animation-container-bunny {
             width: 70%;
-            /* height: 250px; */
-            /* Ajusta la altura según necesites */
             margin: 0 auto;
-            /* Esto centra horizontalmente */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -769,12 +692,9 @@
 </head>
 
 <body>
-    <!-- Header con foto de perfil -->
     <div class="header">
         <div class="profile">
-            <div class="profile-pic">
-                <!-- La animación lottie reemplazará este contenido -->
-            </div>
+            <div class="profile-pic"></div>
             <div class="profile-info">
                 <div class="greeting">Hola! 👋</div>
                 <div class="brand-name">Somos bunny 🥕</div>
@@ -794,11 +714,8 @@
         </div>
     </div>
 
-    <!-- Contenido principal -->
     <div class="content">
-        <!-- Sección de tarjetas (visible al inicio) -->
         <div id="cards-section">
-            <!-- Búsqueda -->
             <div class="search-container">
                 <input type="text" class="search-bar" placeholder="Buscar tarjeta...">
                 <button class="search-button">
@@ -809,8 +726,7 @@
                     </svg>
                 </button>
             </div>
-        
-            <!-- Carrusel de bancos -->
+
             <div class="bank-carousel">
                 <div class="bank-logo">
                     <img src="https://yt3.googleusercontent.com/lBymkN0YTkgchqTSnYSI5a4F3NZV9UUbAm28MOic-tRWWjqvD2q4gqOUFpLb7KAk2S8FuK5MrK8=s900-c-k-c0x00ffffff-no-rj"
@@ -841,8 +757,7 @@
                     <span style="color: white; font-weight: bold;">I</span>
                 </div>
             </div>
-        
-            <!-- Tabla de tarjetas -->
+
             <div class="table-header">
                 <span>Banco</span>
                 <span>tipo</span>
@@ -850,29 +765,22 @@
                 <span>números</span>
                 <span></span>
             </div>
-            
-            <!-- Contenedor para las filas de tarjetas generadas dinámicamente -->
-            <div id="card-rows-container">
-                <!-- Las filas se generarán dinámicamente con JavaScript -->
-            </div>
+
+            <div id="card-rows-container"></div>
         </div>
-        <!-- Home Section con diseño exacto -->
+
         <div id="home-section">
             <div class="home-content">
                 <div class="welcome-message">
                     <h2>¡Welcome!</h2>
-                    <p>Revisa aquí a los canales que te puedes unir, números de tarjeta y descuentos de bencina.
-                    </p>
+                    <p>Revisa aquí a los canales que te puedes unir, números de tarjeta y descuentos de bencina.</p>
                 </div>
 
                 <div class="channel-buttons">
                     <button onclick="window.open('https://t.me/bunnymoney_chat', '')">Canal de Chat</button>
-                    <button onclick="window.open('https://t.me/bunnymoney_40', '')">Canal de ofertas
-                        40%</button>
-                    <button onclick="window.open('https://t.me/bunnymoney_60', '')">Canal de ofertas
-                        60%</button>
-                    <button onclick="window.open('https://t.me/bunnymoney_80', '')">Canal de ofertas
-                        80%</button>
+                    <button onclick="window.open('https://t.me/bunnymoney_40', '')">Canal de ofertas 40%</button>
+                    <button onclick="window.open('https://t.me/bunnymoney_60', '')">Canal de ofertas 60%</button>
+                    <button onclick="window.open('https://t.me/bunnymoney_80', '')">Canal de ofertas 80%</button>
                     <button onclick="window.open('https://t.me/+Ekegknch0vJkNzFh', '')">Canal de ventas</button>
                     <a href="https://t.me/tiobunny">
                         <div class="vip-button-container">
@@ -881,18 +789,13 @@
                         </div>
                     </a>
                 </div>
-
             </div>
         </div>
 
-
         <div id="gas-section">
             <h2 class="section-title">MARZO</h2>
-        
-            <!-- Contenedor para la animación con Lottie -->
             <div id="car-animation-container" style="text-align: center; margin: 20px 0; height: 150px;"></div>
-        
-            <!-- Carrusel de días de la semana - FIJADO -->
+
             <div class="day-carousel">
                 <button class="day-button active" data-day="all">
                     <div class="day-circle">T</div>
@@ -919,23 +822,18 @@
                     <div class="day-circle">D</div>
                 </button>
             </div>
-        
-            <!-- Tabla de descuentos -->
+
             <div class="table-header">
                 <span>Tarjeta</span>
                 <span>Día</span>
                 <span>Local</span>
                 <span>$/Litro</span>
             </div>
-            
-            <!-- Contenedor para las filas de bencina generadas dinámicamente -->
-            <div id="gas-rows-container">
-                <!-- Las filas se generarán dinámicamente con JavaScript -->
-            </div>
+
+            <div id="gas-rows-container"></div>
         </div>
-        
+
         <div id="info-section">
-            <!-- Contenido de la sección Info -->
             <div id="animation-container-bunny"></div>
             <h2 class="about-us">Sobre nosotros</h2>
             <p>Somos bunnymoney y estamos aquí para traerte ofertas y oportunidades de ahorro. Puedes encontrarnos en el
@@ -993,15 +891,11 @@
                             d="M642.685 444.941C638.55 442.959 634.35 441.052 630.095 439.225C622.685 302.691 548.08 224.525 422.809 223.725C422.242 223.721 421.677 223.721 421.11 223.721C346.182 223.721 283.866 255.704 245.51 313.904L314.405 361.164C343.058 317.692 388.026 308.424 421.143 308.424C421.526 308.424 421.91 308.424 422.288 308.427C463.535 308.69 494.66 320.683 514.805 344.07C529.465 361.097 539.27 384.625 544.125 414.319C507.555 408.103 468.005 406.192 425.725 408.616C306.623 415.477 230.055 484.94 235.198 581.46C237.807 630.42 262.199 672.54 303.875 700.055C339.112 723.315 384.495 734.69 431.661 732.115C493.95 728.7 542.815 704.935 576.905 661.48C602.795 628.48 619.17 585.715 626.4 531.83C656.085 549.745 678.085 573.32 690.235 601.66C710.895 649.835 712.1 729 647.505 793.54C590.91 850.08 522.88 874.54 420.067 875.295C306.021 874.45 219.769 837.875 163.69 766.585C111.177 699.83 84.0385 603.41 83.026 480C84.0385 356.589 111.177 260.168 163.69 193.414C219.769 122.125 306.02 85.55 420.066 84.7025C534.94 85.5565 622.695 122.307 680.92 193.94C709.47 229.068 730.995 273.244 745.185 324.752L825.92 303.211C808.72 239.811 781.655 185.178 744.825 139.87C670.18 48.0334 561.01 0.97574 420.348 0H419.785C279.408 0.97235 171.46 48.209 98.9415 140.396C34.4095 222.432 1.122 336.579 0.00349998 479.663L0 480L0.00349998 480.337C1.122 623.42 34.4095 737.57 98.9415 819.605C171.46 911.79 279.408 959.03 419.785 960H420.348C545.15 959.135 633.12 926.46 705.59 854.055C800.405 759.33 797.55 640.595 766.3 567.705C743.88 515.435 701.135 472.981 642.685 444.941ZM427.202 647.535C375.003 650.475 320.772 627.045 318.098 576.86C316.116 539.65 344.579 498.13 430.406 493.184C440.235 492.617 449.88 492.34 459.355 492.34C490.53 492.34 519.695 495.368 546.21 501.165C536.32 624.675 478.31 644.73 427.202 647.535Z"
                             fill="black" />
                     </svg>
-
                 </a>
             </div>
         </div>
     </div>
 
-
-
-    <!-- Navbar inferior -->
     <div class="navbar">
         <button class="nav-button active" data-section="home-section">
             <div class="nav-icon">
@@ -1013,9 +907,7 @@
                         d="M21.1458 32.375V24.125C21.1458 23.5727 20.6981 23.125 20.1458 23.125H14.8542C14.3019 23.125 13.8542 23.5727 13.8542 24.125V32.375"
                         stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
-
             </div>
-            <!-- <div class="nav-text">Home</div> -->
         </button>
         <button class="nav-button" data-section="cards-section">
             <div class="nav-icon">
@@ -1024,9 +916,7 @@
                     <path d="M10.2083 21.875H10.2223" stroke="white" stroke-width="2" stroke-linecap="round" />
                     <path d="M5.83333 16.0417H30.625" stroke="white" stroke-width="2" stroke-linecap="round" />
                 </svg>
-
             </div>
-            <!-- <div class="nav-text">Tarjetas</div> -->
         </button>
         <button class="nav-button" data-section="gas-section">
             <div class="nav-icon">
@@ -1037,9 +927,7 @@
                         d="M8.95833 25.0833H19.7083V12.5417M19.7083 12.5417V16.125H7.16666V32.0417C7.16666 33.1462 8.06209 34.0417 9.16666 34.0417H12.5417M19.7083 12.5417H26.875L35.458 19.4081C35.6952 19.5979 35.8333 19.8852 35.8333 20.1889V23.2917M30.4583 16.125H28.6667V23.2917H35.8333M35.8333 23.2917V32.0417C35.8333 33.1462 34.9379 34.0417 33.8333 34.0417H32.25M25.0833 34.0417H19.7083"
                         stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
-
             </div>
-            <!-- <div class="nav-text">Bencinas</div> -->
         </button>
         <button class="nav-button" data-section="info-section">
             <div class="nav-icon">
@@ -1050,294 +938,250 @@
                         fill="white" stroke="white" />
                     <path d="M16.5 23.375V13.75" stroke="white" stroke-width="2" />
                 </svg>
-
             </div>
-            <!-- <div class="nav-text">Info</div> -->
         </button>
     </div>
-
     <script>
-// Script principal para la aplicación Bunny
-document.addEventListener('DOMContentLoaded', function () {
-    // 1. CARGA DE DATOS
-    // Función para cargar los datos desde el archivo JSON
-    async function loadData() {
-        try {
-            const response = await fetch('data.json');
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+        document.addEventListener('DOMContentLoaded', function () {
+            async function loadData() {
+                try {
+                    const response = await fetch('data.json');
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error cargando los datos:', error);
+                    return {
+                        cards: [],
+                        bencina: []
+                    };
+                }
             }
-            return await response.json();
-        } catch (error) {
-            console.error('Error cargando los datos:', error);
-            // Datos de respaldo en caso de error
-            return {
-                cards: [],
-                bencina: []
+
+            const navButtons = document.querySelectorAll('.nav-button');
+            const sections = document.querySelectorAll('#home-section, #cards-section, #gas-section, #info-section');
+            const body = document.body;
+
+            let animations = {
+                profile: null,
+                car: null,
+                bunny: null,
+                vip: null
             };
-        }
-    }
 
-    // 2. INICIALIZACIÓN DE COMPONENTES
-    // Referencias a elementos
-    const navButtons = document.querySelectorAll('.nav-button');
-    const sections = document.querySelectorAll('#home-section, #cards-section, #gas-section, #info-section');
-    const body = document.body;
+            document.addEventListener('touchstart', function (e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
 
-    // Inicializar todas las animaciones Lottie apenas carga la página
-    let animations = {
-        profile: null,
-        car: null,
-        bunny: null,
-        vip: null
-    };
+            document.addEventListener('contextmenu', event => event.preventDefault());
 
-    // 3. CONFIGURACIÓN DE EVENTOS Y PREVENCIÓN DE INTERACCIONES NO DESEADAS
-    document.addEventListener('touchstart', function (e) {
-        if (e.touches.length > 1) {
-            e.preventDefault();
-        }
-    }, { passive: false });
+            function preloadAnimations() {
+                const profilePicContainer = document.querySelector('.profile-pic');
+                if (profilePicContainer) {
+                    profilePicContainer.innerHTML = '';
+                    animations.profile = lottie.loadAnimation({
+                        container: profilePicContainer,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: true,
+                        path: 'https://gist.githubusercontent.com/randomuserduh/9ade3d032819f88ba32f3114e6e5b6ff/raw/8331691d8b9841ddb96dc486202df609f1cb6dfa/profile.json'
+                    });
+                }
 
-    document.addEventListener('contextmenu', event => event.preventDefault());
+                const carContainer = document.getElementById('car-animation-container');
+                if (carContainer) {
+                    animations.car = lottie.loadAnimation({
+                        container: carContainer,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: false,
+                        path: 'https://gist.githubusercontent.com/randomuserduh/978a8e38c336559818a319be9fb0b157/raw/009c33dba18b0f8540e10bbc6edbe5cd10e6fad1/driver.json'
+                    });
+                    animations.car.goToAndStop(0, true);
+                }
 
-    // 4. FUNCIONES PRINCIPALES
-    // Función para inicializar todas las animaciones
-    function preloadAnimations() {
-        // Inicializar animación de perfil
-        const profilePicContainer = document.querySelector('.profile-pic');
-        if (profilePicContainer) {
-            profilePicContainer.innerHTML = '';
-            animations.profile = lottie.loadAnimation({
-                container: profilePicContainer,
-                renderer: 'svg',
-                loop: true,
-                autoplay: true,
-                path: 'https://gist.githubusercontent.com/jenyferis/cd826553df578523d7b3abf058ab93ab/raw/b6dffb79343b439d8fdbd7223c55f8e3a8c6fc7b/perfil.json'
-            });
-        }
+                const bunnyContainer = document.getElementById('animation-container-bunny');
+                if (bunnyContainer) {
+                    animations.bunny = lottie.loadAnimation({
+                        container: bunnyContainer,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: false,
+                        path: 'https://gist.githubusercontent.com/randomuserduh/f8fe0fbd6ab8a1cf61804c07c3f18997/raw/3d20bd415ab5eb2f60c0abfcf1ab0e27041eda90/bunny.json'
+                    });
+                    animations.bunny.goToAndStop(0, true);
+                }
 
-        // Pre-cargar animación del coche
-        const carContainer = document.getElementById('car-animation-container');
-        if (carContainer) {
-            animations.car = lottie.loadAnimation({
-                container: carContainer,
-                renderer: 'svg',
-                loop: true,
-                autoplay: false, // Inicialmente no reproducir
-                path: 'https://gist.githubusercontent.com/jenyferis/c81b00183c4d8165860c17ffa7977eb6/raw/c8b457c8c72942696eaefdd410877407c770b302/conductor.json'
-            });
-            animations.car.goToAndStop(0, true); // Pausa en el primer frame
-        }
-
-        // Pre-cargar animación del conejo
-        const bunnyContainer = document.getElementById('animation-container-bunny');
-        if (bunnyContainer) {
-            animations.bunny = lottie.loadAnimation({
-                container: bunnyContainer,
-                renderer: 'svg',
-                loop: true,
-                autoplay: false, // Inicialmente no reproducir
-                path: 'https://gist.githubusercontent.com/jenyferis/68a1cda0a8c3616e4b4c2e33093043eb/raw/e6582aa858d463dbfcaf96603e8ba80fd4c3b422/conejo.json'
-            });
-            animations.bunny.goToAndStop(0, true); // Pausa en el primer frame
-        }
-
-        // Inicializar animación VIP
-        const confettiContainer = document.getElementById('lottie-confetti');
-        if (confettiContainer) {
-            confettiContainer.innerHTML = '';
-            animations.vip = lottie.loadAnimation({
-                container: confettiContainer,
-                renderer: 'svg',
-                loop: true,
-                autoplay: true,
-                path: 'https://gist.githubusercontent.com/jenyferis/fa2b2bf60f88cb3647f41ef9542db7f7/raw/a95bd6e0a0cca9f15227aaba6fc22bf7f1b36214/vip.json'
-            });
-        }
-    }
-
-    // Gestión de transiciones entre secciones con mejor rendimiento
-    function switchSection(sectionId) {
-        // Si ya estamos en esta sección, no hacer nada
-        if (document.getElementById(sectionId).classList.contains('section-active')) {
-            return;
-        }
-
-        // Desactivar todas las secciones actuales primero
-        sections.forEach(section => {
-            section.classList.remove('section-active');
-        });
-
-        // Actualizar los botones de navegación
-        navButtons.forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.getAttribute('data-section') === sectionId) {
-                btn.classList.add('active');
+                const confettiContainer = document.getElementById('lottie-confetti');
+                if (confettiContainer) {
+                    confettiContainer.innerHTML = '';
+                    animations.vip = lottie.loadAnimation({
+                        container: confettiContainer,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: true,
+                        path: 'https://gist.githubusercontent.com/randomuserduh/428b2d549e288e4830fdf9574051635d/raw/dbef79a7718429341b92d6e09994dadfba36e693/vip.json'
+                    });
+                }
             }
-        });
 
-        // Cambiar fondo para la sección info
-        if (sectionId === 'info-section') {
-            body.classList.add('info-active');
-        } else {
-            body.classList.remove('info-active');
-        }
+            function switchSection(sectionId) {
+                if (document.getElementById(sectionId).classList.contains('section-active')) {
+                    return;
+                }
 
-        // Activar la nueva sección con un pequeño retraso para permitir que la transición de ocultamiento termine
-        const targetSection = document.getElementById(sectionId);
+                sections.forEach(section => {
+                    section.classList.remove('section-active');
+                });
 
-        // Pequeño retraso para la animación fluida
-        setTimeout(() => {
-            targetSection.classList.add('section-active');
-
-            // Activar animaciones específicas para cada sección
-            if (sectionId === 'gas-section' && animations.car) {
-                animations.car.goToAndPlay(0, true);
-            } else if (sectionId === 'info-section' && animations.bunny) {
-                animations.bunny.goToAndPlay(0, true);
-            }
-        }, 100); // Aumentado ligeramente el tiempo de retraso
-    }
-
-    // Filtros de días para la sección de gas
-    function initDayFilters() {
-        const dayButtons = document.querySelectorAll('.day-button');
-        const gasRows = document.querySelectorAll('.gas-row');
-
-        dayButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                // Desactivar todos los botones
-                dayButtons.forEach(btn => btn.classList.remove('active'));
-
-                // Activar el botón actual
-                this.classList.add('active');
-
-                // Obtener el día seleccionado
-                const selectedDay = this.getAttribute('data-day');
-
-                // Filtrar filas
-                gasRows.forEach(row => {
-                    if (selectedDay === 'all' || row.getAttribute('data-day') === selectedDay) {
-                        row.classList.remove('hidden');
-                    } else {
-                        row.classList.add('hidden');
+                navButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-section') === sectionId) {
+                        btn.classList.add('active');
                     }
                 });
 
-                // Centrar el botón en el carrusel con animación suave
-                const carousel = document.querySelector('.day-carousel');
-                const buttonRect = button.getBoundingClientRect();
-                const carouselRect = carousel.getBoundingClientRect();
+                if (sectionId === 'info-section') {
+                    body.classList.add('info-active');
+                } else {
+                    body.classList.remove('info-active');
+                }
 
-                const scrollLeft = buttonRect.left - carouselRect.left -
-                    (carouselRect.width / 2) + (buttonRect.width / 2);
+                const targetSection = document.getElementById(sectionId);
 
-                carousel.scrollTo({
-                    left: carousel.scrollLeft + scrollLeft,
-                    behavior: 'smooth'
-                });
-            });
-        });
-    }
+                setTimeout(() => {
+                    targetSection.classList.add('section-active');
 
-    // Funcionalidad de búsqueda
-    function initSearchBar() {
-        const searchBar = document.querySelector('.search-bar');
-        if (searchBar) {
-            searchBar.addEventListener('input', function () {
-                const searchTerm = this.value.toLowerCase().trim();
-                const rows = document.querySelectorAll('#cards-section .card-row');
-
-                rows.forEach(row => {
-                    const text = Array.from(row.querySelectorAll('.card-column'))
-                        .map(col => col.textContent.toLowerCase())
-                        .join(' ');
-
-                    if (text.includes(searchTerm)) {
-                        row.style.display = 'grid';
-                    } else {
-                        row.style.display = 'none';
+                    if (sectionId === 'gas-section' && animations.car) {
+                        animations.car.goToAndPlay(0, true);
+                    } else if (sectionId === 'info-section' && animations.bunny) {
+                        animations.bunny.goToAndPlay(0, true);
                     }
+                }, 100);
+            }
+
+            function initDayFilters() {
+                const dayButtons = document.querySelectorAll('.day-button');
+                const gasRows = document.querySelectorAll('.gas-row');
+
+                dayButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        dayButtons.forEach(btn => btn.classList.remove('active'));
+
+                        this.classList.add('active');
+
+                        const selectedDay = this.getAttribute('data-day');
+
+                        gasRows.forEach(row => {
+                            if (selectedDay === 'all' || row.getAttribute('data-day') === selectedDay) {
+                                row.classList.remove('hidden');
+                            } else {
+                                row.classList.add('hidden');
+                            }
+                        });
+
+                        const carousel = document.querySelector('.day-carousel');
+                        const buttonRect = button.getBoundingClientRect();
+                        const carouselRect = carousel.getBoundingClientRect();
+
+                        const scrollLeft = buttonRect.left - carouselRect.left -
+                            (carouselRect.width / 2) + (buttonRect.width / 2);
+
+                        carousel.scrollTo({
+                            left: carousel.scrollLeft + scrollLeft,
+                            behavior: 'smooth'
+                        });
+                    });
                 });
-            });
-        }
-    }
+            }
 
-    // Funcionalidad de copiar
-    function initCopyButtons() {
-        const copyButtons = document.querySelectorAll('.copy-button');
-        copyButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const row = this.closest('.card-row');
-                const cardDetails = Array.from(row.querySelectorAll('.card-column'))
-                    .map(col => col.textContent)
-                    .join(' - ');
+            function initSearchBar() {
+                const searchBar = document.querySelector('.search-bar');
+                if (searchBar) {
+                    searchBar.addEventListener('input', function () {
+                        const searchTerm = this.value.toLowerCase().trim();
+                        const rows = document.querySelectorAll('#cards-section .card-row');
 
-                // Copiar al portapapeles
-                navigator.clipboard.writeText(cardDetails)
-                    .then(() => {
-                        // Cambiar el ícono temporalmente para indicar éxito
-                        this.innerHTML = `
+                        rows.forEach(row => {
+                            const text = Array.from(row.querySelectorAll('.card-column'))
+                                .map(col => col.textContent.toLowerCase())
+                                .join(' ');
+
+                            if (text.includes(searchTerm)) {
+                                row.style.display = 'grid';
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        });
+                    });
+                }
+            }
+
+            function initCopyButtons() {
+                const copyButtons = document.querySelectorAll('.copy-button');
+                copyButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        const row = this.closest('.card-row');
+                        const cardDetails = Array.from(row.querySelectorAll('.card-column'))
+                            .map(col => col.textContent)
+                            .join(' - ');
+
+                        navigator.clipboard.writeText(cardDetails)
+                            .then(() => {
+                                this.innerHTML = `
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="#4CAF50"/>
                     </svg>
                 `;
 
-                        // Volver al ícono original después de 2 segundos
-                        setTimeout(() => {
-                            this.innerHTML = `
+                                setTimeout(() => {
+                                    this.innerHTML = `
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="#8888A0"/>
                         </svg>
                     `;
-                        }, 2000);
-                    })
-                    .catch(err => {
-                        console.error('Error al copiar: ', err);
+                                }, 2000);
+                            })
+                            .catch(err => {
+                                console.error('Error al copiar: ', err);
+                            });
                     });
-            });
-        });
-    }
-
-    // Efecto visual para los botones del canal
-    function initChannelButtons() {
-        const homeButtons = document.querySelectorAll('.channel-buttons button:not(.vip-button)');
-        homeButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                // Añadir clase de clickeado para efecto visual
-                this.classList.add('clicked');
-
-                // Remover la clase después de la transición
-                setTimeout(() => {
-                    this.classList.remove('clicked');
-                }, 300);
-            });
-        });
-    }
-
-    // 5. CARGA DE DATOS DESDE JSON
-    async function loadAndRenderData() {
-        try {
-            // Cargar los datos desde el JSON
-            const data = await loadData();
-            console.log("Datos cargados:", data); // Para depuración
-            
-            // Verificar que se obtuvieron los datos
-            if (!data || !data.cards || !data.bencina) {
-                console.error("No se pudieron cargar los datos o el formato es incorrecto");
-                return;
+                });
             }
-            
-            // Generar las filas de tarjetas dinámicamente
-            const cardRowsContainer = document.getElementById('card-rows-container');
-            if (cardRowsContainer) {
-                cardRowsContainer.innerHTML = '';
-                
-                data.cards.forEach(card => {
-                    const row = document.createElement('div');
-                    row.className = 'card-row';
-                    row.innerHTML = `
+
+            function initChannelButtons() {
+                const homeButtons = document.querySelectorAll('.channel-buttons button:not(.vip-button)');
+                homeButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        this.classList.add('clicked');
+
+                        setTimeout(() => {
+                            this.classList.remove('clicked');
+                        }, 300);
+                    });
+                });
+            }
+
+            async function loadAndRenderData() {
+                try {
+                    const data = await loadData();
+
+                    if (!data || !data.cards || !data.bencina) {
+                        console.error("No se pudieron cargar los datos o el formato es incorrecto");
+                        return;
+                    }
+
+                    const cardRowsContainer = document.getElementById('card-rows-container');
+                    if (cardRowsContainer) {
+                        cardRowsContainer.innerHTML = '';
+
+                        data.cards.forEach(card => {
+                            const row = document.createElement('div');
+                            row.className = 'card-row';
+                            row.innerHTML = `
                         <div class="card-column">${card.banco}</div>
                         <div class="card-column">${card.tipo}</div>
                         <div class="card-column">${card.nivel}</div>
@@ -1350,100 +1194,83 @@ document.addEventListener('DOMContentLoaded', function () {
                             </svg>
                         </button>
                     `;
-                    cardRowsContainer.appendChild(row);
-                });
-                
-                // Reinicializar los botones de copiar después de agregar las filas
-                initCopyButtons();
-            } else {
-                console.error("No se encontró el contenedor de filas de tarjetas");
-            }
-            
-            // Generar las filas de bencina dinámicamente
-            const gasRowsContainer = document.getElementById('gas-rows-container');
-            if (gasRowsContainer) {
-                gasRowsContainer.innerHTML = '';
-                
-                data.bencina.forEach(item => {
-                    const row = document.createElement('div');
-                    row.className = 'card-row gas-row';
-                    row.setAttribute('data-day', item.dia);
-                    row.innerHTML = `
+                            cardRowsContainer.appendChild(row);
+                        });
+
+                        initCopyButtons();
+                    }
+
+                    const gasRowsContainer = document.getElementById('gas-rows-container');
+                    if (gasRowsContainer) {
+                        gasRowsContainer.innerHTML = '';
+
+                        data.bencina.forEach(item => {
+                            const row = document.createElement('div');
+                            row.className = 'card-row gas-row';
+                            row.setAttribute('data-day', item.dia);
+                            row.innerHTML = `
                         <div class="card-column">${item.tarjeta}</div>
                         <div class="card-column">${item.diaCorto}</div>
                         <div class="card-column">${item.local}</div>
                         <div class="card-column">${item.descuento}</div>
                     `;
-                    gasRowsContainer.appendChild(row);
-                });
-                
-                // Actualizar filtros después de agregar filas
+                            gasRowsContainer.appendChild(row);
+                        });
+
+                        initDayFilters();
+                    }
+                } catch (error) {
+                    console.error("Error al cargar o procesar los datos:", error);
+                }
+            }
+
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+            if (isTouchDevice) {
+                document.documentElement.classList.add('touch-device');
+            }
+
+            function init() {
+                preloadAnimations();
                 initDayFilters();
-            } else {
-                console.error("No se encontró el contenedor de filas de bencina");
-            }
-        } catch (error) {
-            console.error("Error al cargar o procesar los datos:", error);
-        }
-    }
+                initSearchBar();
+                initCopyButtons();
+                initChannelButtons();
 
-    // 6. INICIALIZACIÓN DE LA APLICACIÓN
-    // Detectar si el dispositivo es táctil
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+                loadAndRenderData();
 
-    // Desactivar efectos hover en dispositivos táctiles
-    if (isTouchDevice) {
-        document.documentElement.classList.add('touch-device');
-    }
+                switchSection('home-section');
 
-    // Inicializar todas las funcionalidades
-    function init() {
-        preloadAnimations();
-        initDayFilters();
-        initSearchBar();
-        initCopyButtons();
-        initChannelButtons();
-        
-        // Cargar datos desde JSON
-        loadAndRenderData();
-
-        // Iniciar en la sección home
-        switchSection('home-section');
-
-        // Mejorar el rendimiento evitando la re-renderización innecesaria
-        document.querySelectorAll('img').forEach(img => {
-            img.addEventListener('load', function () {
-                this.classList.add('loaded');
-            });
-        });
-
-        // Si no aparece alguna animación, intentar cargarla de nuevo
-        setTimeout(() => {
-            if (animations.profile && !animations.profile.isLoaded) {
-                animations.profile.destroy();
-                const profilePicContainer = document.querySelector('.profile-pic');
-                animations.profile = lottie.loadAnimation({
-                    container: profilePicContainer,
-                    renderer: 'svg',
-                    loop: true,
-                    autoplay: true,
-                    path: 'https://gist.githubusercontent.com/jenyferis/cd826553df578523d7b3abf058ab93ab/raw/b6dffb79343b439d8fdbd7223c55f8e3a8c6fc7b/perfil.json'
+                document.querySelectorAll('img').forEach(img => {
+                    img.addEventListener('load', function () {
+                        this.classList.add('loaded');
+                    });
                 });
+
+                setTimeout(() => {
+                    if (animations.profile && !animations.profile.isLoaded) {
+                        animations.profile.destroy();
+                        const profilePicContainer = document.querySelector('.profile-pic');
+                        animations.profile = lottie.loadAnimation({
+                            container: profilePicContainer,
+                            renderer: 'svg',
+                            loop: true,
+                            autoplay: true,
+                            path: 'https://gist.githubusercontent.com/randomuserduh/9ade3d032819f88ba32f3114e6e5b6ff/raw/8331691d8b9841ddb96dc486202df609f1cb6dfa/profile.json'
+                        });
+                    }
+                }, 1000);
             }
-        }, 1000);
-    }
 
-    // Inicializar handlers de navegación
-    navButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const sectionId = this.getAttribute('data-section');
-            switchSection(sectionId);
+            navButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const sectionId = this.getAttribute('data-section');
+                    switchSection(sectionId);
+                });
+            });
+
+            init();
         });
-    });
-
-    // Iniciar la aplicación
-    init();
-});
     </script>
 </body>
 

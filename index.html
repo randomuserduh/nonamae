@@ -944,365 +944,304 @@
         </button>
     </div>
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-    // Inicializar y expandir la aplicación de Telegram
-    if (window.Telegram && window.Telegram.WebApp) {
-        console.log("Telegram WebApp detectado, expandiendo...");
-        window.Telegram.WebApp.expand();
-        window.Telegram.WebApp.setBackgroundColor('#040707');
-        // Aseguramos que Telegram está listo
-        window.Telegram.WebApp.ready();
-    } else {
-        console.log("No se detectó Telegram WebApp");
-    }
-
-    async function loadData() {
-        try {
-            const response = await fetch('data.json');
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+        document.addEventListener('DOMContentLoaded', function () {
+            // Inicializar y expandir la aplicación de Telegram
+            if (window.Telegram && window.Telegram.WebApp) {
+                console.log("Telegram WebApp detectado, expandiendo...");
+                window.Telegram.WebApp.expand();
+                window.Telegram.WebApp.setBackgroundColor('#040707');
+            } else {
+                console.log("No se detectó Telegram WebApp");
             }
-            return await response.json();
-        } catch (error) {
-            console.error('Error cargando los datos:', error);
-            return {
-                cards: [],
-                bencina: []
+
+            function vibrar() {
+                if (window.Telegram && Telegram.WebApp) {
+                    Telegram.WebApp.HapticFeedback.impactOccurred("medium"); // Vibración media en Telegram
+                } else if (navigator.vibrate) {
+                    navigator.vibrate(50); // Vibración estándar si Telegram no está disponible
+                }
+            }
+
+            // Añadir vibración a todos los botones
+            document.querySelectorAll('button, .nav-button').forEach(button => {
+                button.addEventListener('click', vibrar);
+            });
+
+            // También añadir vibración a enlaces con `a` si lo deseas
+            document.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', vibrar);
+            });
+
+
+            async function loadData() {
+                try {
+                    const response = await fetch('data.json');
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error cargando los datos:', error);
+                    return {
+                        cards: [],
+                        bencina: []
+                    };
+                }
+            }
+
+            const navButtons = document.querySelectorAll('.nav-button');
+            const sections = document.querySelectorAll('#home-section, #cards-section, #gas-section, #info-section');
+            const body = document.body;
+
+            let animations = {
+                profile: null,
+                car: null,
+                bunny: null,
+                vip: null
             };
-        }
-    }
 
-    const navButtons = document.querySelectorAll('.nav-button');
-    const sections = document.querySelectorAll('#home-section, #cards-section, #gas-section, #info-section');
-    const body = document.body;
-
-    let animations = {
-        profile: null,
-        car: null,
-        bunny: null,
-        vip: null
-    };
-
-    document.addEventListener('touchstart', function (e) {
-        if (e.touches.length > 1) {
-            e.preventDefault();
-        }
-    }, { passive: false });
-
-    document.addEventListener('contextmenu', event => event.preventDefault());
-
-
-function vibrate(intensity = 'medium') {
-    if (navigator && navigator.vibrate) {
-
-        const duration = intensity === 'light' ? 15 : intensity === 'medium' ? 30 : 50;
-        navigator.vibrate(duration);
-        return true;
-    }
-    return false;
-}
-    function addVibrationsToAll() {
-        // 1. Botones de navegación
-        const navButtons = document.querySelectorAll('.nav-button');
-        navButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                vibrate('medium');
-            });
-            button.addEventListener('touchstart', function () {
-                vibrate('medium');
-            }, { passive: true });
-        });
-
-
-        const channelButtons = document.querySelectorAll('.channel-buttons button, .vip-button-container button');
-        channelButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                vibrate('heavy');
-            });
-            button.addEventListener('touchstart', function () {
-                vibrate('heavy');
-            }, { passive: true });
-        });
-
-        document.querySelectorAll('.copy-button').forEach(button => {
-            button.addEventListener('click', function () {
-                vibrate('medium');
-            });
-            button.addEventListener('touchstart', function () {
-                vibrate('medium');
-            }, { passive: true });
-        });
-
-
-        document.querySelectorAll('.day-button').forEach(button => {
-            button.addEventListener('click', function () {
-                vibrate('light');
-            });
-            button.addEventListener('touchstart', function () {
-                vibrate('light');
-            }, { passive: true });
-        });
-
-
-        const searchButton = document.querySelector('.search-button');
-        if (searchButton) {
-            searchButton.addEventListener('click', function () {
-                vibrate('medium');
-            });
-            searchButton.addEventListener('touchstart', function () {
-                vibrate('medium');
-            }, { passive: true });
-        }
-
-        // 6. Interacción con la barra de búsqueda
-        const searchBar = document.querySelector('.search-bar');
-        if (searchBar) {
-            searchBar.addEventListener('focus', function () {
-                vibrate('light');
-            });
-        }
-
-        // 7. Banco logos en el carrusel
-        const bankLogos = document.querySelectorAll('.bank-logo');
-        bankLogos.forEach(logo => {
-            logo.addEventListener('click', function () {
-                vibrate('light');
-            });
-            logo.addEventListener('touchstart', function () {
-                vibrate('light');
-            }, { passive: true });
-        });
-
-        // 8. Filas de tarjetas
-        const cardRows = document.querySelectorAll('.card-row');
-        cardRows.forEach(row => {
-            row.addEventListener('click', function (e) {
-                // Solo vibrar si el clic no fue en el botón de copia
-                if (!e.target.closest('.copy-button')) {
-                    vibrate('light');
+            document.addEventListener('touchstart', function (e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
                 }
-            });
-            row.addEventListener('touchstart', function (e) {
-                // Solo vibrar si el toque no fue en el botón de copia
-                if (!e.target.closest('.copy-button')) {
-                    vibrate('light');
+            }, { passive: false });
+
+            document.addEventListener('contextmenu', event => event.preventDefault());
+
+            // Función de vibración simple
+            function vibrar() {
+                try {
+                    if (navigator && navigator.vibrate) {
+                        navigator.vibrate(50);
+                    }
+                } catch (error) {
+                    console.error("Error al intentar vibrar:", error);
                 }
-            }, { passive: true });
-        });
-    }
-
-    function preloadAnimations() {
-        const profilePicContainer = document.querySelector('.profile-pic');
-        if (profilePicContainer) {
-            profilePicContainer.innerHTML = '';
-            animations.profile = lottie.loadAnimation({
-                container: profilePicContainer,
-                renderer: 'svg',
-                loop: true,
-                autoplay: true,
-                path: 'https://gist.githubusercontent.com/randomuserduh/9ade3d032819f88ba32f3114e6e5b6ff/raw/8331691d8b9841ddb96dc486202df609f1cb6dfa/profile.json'
-            });
-        }
-
-        const carContainer = document.getElementById('car-animation-container');
-        if (carContainer) {
-            animations.car = lottie.loadAnimation({
-                container: carContainer,
-                renderer: 'svg',
-                loop: true,
-                autoplay: false,
-                path: 'https://gist.githubusercontent.com/randomuserduh/978a8e38c336559818a319be9fb0b157/raw/009c33dba18b0f8540e10bbc6edbe5cd10e6fad1/driver.json'
-            });
-            animations.car.goToAndStop(0, true);
-        }
-
-        const bunnyContainer = document.getElementById('animation-container-bunny');
-        if (bunnyContainer) {
-            animations.bunny = lottie.loadAnimation({
-                container: bunnyContainer,
-                renderer: 'svg',
-                loop: true,
-                autoplay: false,
-                path: 'https://gist.githubusercontent.com/randomuserduh/f8fe0fbd6ab8a1cf61804c07c3f18997/raw/3d20bd415ab5eb2f60c0abfcf1ab0e27041eda90/bunny.json'
-            });
-            animations.bunny.goToAndStop(0, true);
-        }
-
-        const confettiContainer = document.getElementById('lottie-confetti');
-        if (confettiContainer) {
-            confettiContainer.innerHTML = '';
-            animations.vip = lottie.loadAnimation({
-                container: confettiContainer,
-                renderer: 'svg',
-                loop: true,
-                autoplay: true,
-                path: 'https://gist.githubusercontent.com/randomuserduh/428b2d549e288e4830fdf9574051635d/raw/dbef79a7718429341b92d6e09994dadfba36e693/vip.json'
-            });
-        }
-    }
-
-    function switchSection(sectionId) {
-        if (document.getElementById(sectionId).classList.contains('section-active')) {
-            return;
-        }
-
-        sections.forEach(section => {
-            section.classList.remove('section-active');
-        });
-
-        navButtons.forEach(btn => {
-            btn.classList.remove('active');
-            if (btn.getAttribute('data-section') === sectionId) {
-                btn.classList.add('active');
             }
-        });
 
-        if (sectionId === 'info-section') {
-            body.classList.add('info-active');
-        } else {
-            body.classList.remove('info-active');
-        }
+            function preloadAnimations() {
+                const profilePicContainer = document.querySelector('.profile-pic');
+                if (profilePicContainer) {
+                    profilePicContainer.innerHTML = '';
+                    animations.profile = lottie.loadAnimation({
+                        container: profilePicContainer,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: true,
+                        path: 'https://gist.githubusercontent.com/randomuserduh/9ade3d032819f88ba32f3114e6e5b6ff/raw/8331691d8b9841ddb96dc486202df609f1cb6dfa/profile.json'
+                    });
+                }
 
-        const targetSection = document.getElementById(sectionId);
+                const carContainer = document.getElementById('car-animation-container');
+                if (carContainer) {
+                    animations.car = lottie.loadAnimation({
+                        container: carContainer,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: false,
+                        path: 'https://gist.githubusercontent.com/randomuserduh/978a8e38c336559818a319be9fb0b157/raw/009c33dba18b0f8540e10bbc6edbe5cd10e6fad1/driver.json'
+                    });
+                    animations.car.goToAndStop(0, true);
+                }
 
-        setTimeout(() => {
-            targetSection.classList.add('section-active');
+                const bunnyContainer = document.getElementById('animation-container-bunny');
+                if (bunnyContainer) {
+                    animations.bunny = lottie.loadAnimation({
+                        container: bunnyContainer,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: false,
+                        path: 'https://gist.githubusercontent.com/randomuserduh/f8fe0fbd6ab8a1cf61804c07c3f18997/raw/3d20bd415ab5eb2f60c0abfcf1ab0e27041eda90/bunny.json'
+                    });
+                    animations.bunny.goToAndStop(0, true);
+                }
 
-            if (sectionId === 'gas-section' && animations.car) {
-                animations.car.goToAndPlay(0, true);
-            } else if (sectionId === 'info-section' && animations.bunny) {
-                animations.bunny.goToAndPlay(0, true);
+                const confettiContainer = document.getElementById('lottie-confetti');
+                if (confettiContainer) {
+                    confettiContainer.innerHTML = '';
+                    animations.vip = lottie.loadAnimation({
+                        container: confettiContainer,
+                        renderer: 'svg',
+                        loop: true,
+                        autoplay: true,
+                        path: 'https://gist.githubusercontent.com/randomuserduh/428b2d549e288e4830fdf9574051635d/raw/dbef79a7718429341b92d6e09994dadfba36e693/vip.json'
+                    });
+                }
             }
-        }, 100);
-    }
 
-    function initDayFilters() {
-        const dayButtons = document.querySelectorAll('.day-button');
-        const gasRows = document.querySelectorAll('.gas-row');
+            function switchSection(sectionId) {
+                if (document.getElementById(sectionId).classList.contains('section-active')) {
+                    return;
+                }
 
-        dayButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                dayButtons.forEach(btn => btn.classList.remove('active'));
+                sections.forEach(section => {
+                    section.classList.remove('section-active');
+                });
 
-                this.classList.add('active');
-
-                const selectedDay = this.getAttribute('data-day');
-
-                gasRows.forEach(row => {
-                    const rowDay = row.getAttribute('data-day');
-
-                    // Show the row if:
-                    // 1. "All" (T) is selected, OR
-                    // 2. The row's day matches the selected day, OR
-                    // 3. The row's day is "Todos" (should appear in all filters)
-                    if (selectedDay === 'all' || rowDay === selectedDay || rowDay === 'Todos') {
-                        row.classList.remove('hidden');
-                    } else {
-                        row.classList.add('hidden');
+                navButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-section') === sectionId) {
+                        btn.classList.add('active');
                     }
                 });
 
-                const carousel = document.querySelector('.day-carousel');
-                const buttonRect = button.getBoundingClientRect();
-                const carouselRect = carousel.getBoundingClientRect();
+                if (sectionId === 'info-section') {
+                    body.classList.add('info-active');
+                } else {
+                    body.classList.remove('info-active');
+                }
 
-                const scrollLeft = buttonRect.left - carouselRect.left -
-                    (carouselRect.width / 2) + (buttonRect.width / 2);
+                const targetSection = document.getElementById(sectionId);
 
-                carousel.scrollTo({
-                    left: carousel.scrollLeft + scrollLeft,
-                    behavior: 'smooth'
-                });
-            });
-        });
-    }
+                setTimeout(() => {
+                    targetSection.classList.add('section-active');
 
-    function initSearchBar() {
-        const searchBar = document.querySelector('.search-bar');
-        if (searchBar) {
-            searchBar.addEventListener('input', function () {
-                const searchTerm = this.value.toLowerCase().trim();
-                const rows = document.querySelectorAll('#cards-section .card-row');
-
-                rows.forEach(row => {
-                    const text = Array.from(row.querySelectorAll('.card-column'))
-                        .map(col => col.textContent.toLowerCase())
-                        .join(' ');
-
-                    if (text.includes(searchTerm)) {
-                        row.style.display = 'grid';
-                    } else {
-                        row.style.display = 'none';
+                    if (sectionId === 'gas-section' && animations.car) {
+                        animations.car.goToAndPlay(0, true);
+                    } else if (sectionId === 'info-section' && animations.bunny) {
+                        animations.bunny.goToAndPlay(0, true);
                     }
+                }, 100);
+            }
+
+            function initDayFilters() {
+                const dayButtons = document.querySelectorAll('.day-button');
+                const gasRows = document.querySelectorAll('.gas-row');
+
+                dayButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        vibrar();
+                        dayButtons.forEach(btn => btn.classList.remove('active'));
+
+                        this.classList.add('active');
+
+                        const selectedDay = this.getAttribute('data-day');
+
+                        gasRows.forEach(row => {
+                            const rowDay = row.getAttribute('data-day');
+
+                            if (selectedDay === 'all' || rowDay === selectedDay || rowDay === 'Todos') {
+                                row.classList.remove('hidden');
+                            } else {
+                                row.classList.add('hidden');
+                            }
+                        });
+
+                        const carousel = document.querySelector('.day-carousel');
+                        const buttonRect = button.getBoundingClientRect();
+                        const carouselRect = carousel.getBoundingClientRect();
+
+                        const scrollLeft = buttonRect.left - carouselRect.left -
+                            (carouselRect.width / 2) + (buttonRect.width / 2);
+
+                        carousel.scrollTo({
+                            left: carousel.scrollLeft + scrollLeft,
+                            behavior: 'smooth'
+                        });
+                    });
                 });
-            });
-        }
-    }
+            }
 
-    function initCopyButtons() {
-        const copyButtons = document.querySelectorAll('.copy-button');
-        copyButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const row = this.closest('.card-row');
-                const numberElement = row.querySelector('.card-column:nth-child(4)');
+            function initSearchBar() {
+                const searchBar = document.querySelector('.search-bar');
+                if (searchBar) {
+                    searchBar.addEventListener('input', function () {
+                        const searchTerm = this.value.toLowerCase().trim();
+                        const rows = document.querySelectorAll('#cards-section .card-row');
 
-                if (numberElement) {
-                    const cardNumber = numberElement.textContent.trim();
+                        rows.forEach(row => {
+                            const text = Array.from(row.querySelectorAll('.card-column'))
+                                .map(col => col.textContent.toLowerCase())
+                                .join(' ');
 
-                    navigator.clipboard.writeText(cardNumber)
-                        .then(() => {
-                            this.innerHTML = `
+                            if (text.includes(searchTerm)) {
+                                row.style.display = 'grid';
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        });
+                    });
+
+                    searchBar.addEventListener('focus', function () {
+                        vibrar();
+                    });
+                }
+            }
+
+            function initCopyButtons() {
+                const copyButtons = document.querySelectorAll('.copy-button');
+                copyButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        vibrar();
+                        const row = this.closest('.card-row');
+                        const numberElement = row.querySelector('.card-column:nth-child(4)');
+
+                        if (numberElement) {
+                            const cardNumber = numberElement.textContent.trim();
+
+                            navigator.clipboard.writeText(cardNumber)
+                                .then(() => {
+                                    this.innerHTML = `
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="#4CAF50"/>
                 </svg>
             `;
 
-                            setTimeout(() => {
-                                this.innerHTML = `
+                                    setTimeout(() => {
+                                        this.innerHTML = `
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="#8888A0"/>
                     </svg>
                 `;
-                            }, 2000);
-                        })
-                        .catch(err => {
-                            console.error('Error al copiar: ', err);
-                        });
-                }
-            });
-        });
-    }
-
-    function initChannelButtons() {
-        const homeButtons = document.querySelectorAll('.channel-buttons button:not(.vip-button)');
-        homeButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                this.classList.add('clicked');
-
-                setTimeout(() => {
-                    this.classList.remove('clicked');
-                }, 300);
-            });
-        });
-    }
-
-    async function loadAndRenderData() {
-        try {
-            const data = await loadData();
-
-            if (!data || !data.cards || !data.bencina) {
-                console.error("No se pudieron cargar los datos o el formato es incorrecto");
-                return;
+                                    }, 2000);
+                                })
+                                .catch(err => {
+                                    console.error('Error al copiar: ', err);
+                                });
+                        }
+                    });
+                });
             }
 
-            const cardRowsContainer = document.getElementById('card-rows-container');
-            if (cardRowsContainer) {
-                cardRowsContainer.innerHTML = '';
+            function initChannelButtons() {
+                const homeButtons = document.querySelectorAll('.channel-buttons button:not(.vip-button)');
+                homeButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        vibrar();
+                        this.classList.add('clicked');
 
-                data.cards.forEach(card => {
-                    const row = document.createElement('div');
-                    row.className = 'card-row';
-                    row.innerHTML = `
+                        setTimeout(() => {
+                            this.classList.remove('clicked');
+                        }, 300);
+                    });
+                });
+
+                // Botón VIP también
+                const vipButton = document.querySelector('.vip-button');
+                if (vipButton) {
+                    vipButton.addEventListener('click', function () {
+                        vibrar();
+                    });
+                }
+            }
+
+            async function loadAndRenderData() {
+                try {
+                    const data = await loadData();
+
+                    if (!data || !data.cards || !data.bencina) {
+                        console.error("No se pudieron cargar los datos o el formato es incorrecto");
+                        return;
+                    }
+
+                    const cardRowsContainer = document.getElementById('card-rows-container');
+                    if (cardRowsContainer) {
+                        cardRowsContainer.innerHTML = '';
+
+                        data.cards.forEach(card => {
+                            const row = document.createElement('div');
+                            row.className = 'card-row';
+                            row.innerHTML = `
                 <div class="card-column">${card.banco}</div>
                 <div class="card-column">${card.tipo}</div>
                 <div class="card-column">${card.nivel}</div>
@@ -1315,128 +1254,123 @@ function vibrate(intensity = 'medium') {
                     </svg>
                 </button>
             `;
-                    cardRowsContainer.appendChild(row);
-                });
+                            cardRowsContainer.appendChild(row);
+                        });
 
-                initCopyButtons();
-            }
+                        initCopyButtons();
+                    }
 
-            const gasRowsContainer = document.getElementById('gas-rows-container');
-            if (gasRowsContainer) {
-                gasRowsContainer.innerHTML = '';
+                    const gasRowsContainer = document.getElementById('gas-rows-container');
+                    if (gasRowsContainer) {
+                        gasRowsContainer.innerHTML = '';
 
-                data.bencina.forEach(item => {
-                    const row = document.createElement('div');
-                    row.className = 'card-row gas-row';
-                    row.setAttribute('data-day', item.dia);
-                    row.innerHTML = `
+                        data.bencina.forEach(item => {
+                            const row = document.createElement('div');
+                            row.className = 'card-row gas-row';
+                            row.setAttribute('data-day', item.dia);
+                            row.innerHTML = `
                 <div class="card-column">${item.tarjeta}</div>
                 <div class="card-column">${item.diaCorto}</div>
                 <div class="card-column">${item.local}</div>
                 <div class="card-column">${item.descuento}</div>
             `;
-                    gasRowsContainer.appendChild(row);
+                            gasRowsContainer.appendChild(row);
+                        });
+
+                        initDayFilters();
+                    }
+                } catch (error) {
+                    console.error("Error al cargar o procesar los datos:", error);
+                }
+            }
+
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+            if (isTouchDevice) {
+                document.documentElement.classList.add('touch-device');
+            }
+
+            // Añadir vibración a botones de navegación
+            function setupNavButtonVibration() {
+                navButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        vibrar();
+                        const sectionId = this.getAttribute('data-section');
+                        switchSection(sectionId);
+                    });
+                });
+            }
+
+            // Función para agregar botón de prueba de vibración
+            function addVibrationTester() {
+                const testButton = document.createElement('button');
+                testButton.textContent = 'VIBRAR';
+                testButton.style.position = 'fixed';
+                testButton.style.bottom = '150px';
+                testButton.style.left = '50%';
+                testButton.style.transform = 'translateX(-50%)';
+                testButton.style.zIndex = '9999';
+                testButton.style.backgroundColor = '#ff0000';
+                testButton.style.color = 'white';
+                testButton.style.padding = '10px 20px';
+                testButton.style.borderRadius = '25px';
+                testButton.style.border = 'none';
+
+                testButton.addEventListener('click', function () {
+                    console.log('Intentando vibrar...');
+
+                    try {
+                        if (navigator && navigator.vibrate) {
+                            navigator.vibrate(500);
+                            console.log('Vibración activada');
+                        } else {
+                            console.log('API de vibración no disponible');
+                        }
+                    } catch (error) {
+                        console.error("Error al vibrar:", error);
+                    }
                 });
 
+                document.body.appendChild(testButton);
+            }
+
+            function init() {
+                preloadAnimations();
+                setupNavButtonVibration(); // Agregar vibración a los botones de navegación
                 initDayFilters();
-            }
-            
-            // Agregar vibraciones después de cargar los datos
-            addVibrationsToAll();
-        } catch (error) {
-            console.error("Error al cargar o procesar los datos:", error);
-        }
-    }
+                initSearchBar();
+                initCopyButtons();
+                initChannelButtons();
+                loadAndRenderData();
 
-    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+                // Descomentar para añadir botón de prueba
+                addVibrationTester();
 
-    if (isTouchDevice) {
-        document.documentElement.classList.add('touch-device');
-    }
+                switchSection('home-section');
 
-    // Función para probar la vibración
-    function addVibrationTester() {
-        const testButton = document.createElement('button');
-        testButton.textContent = 'Probar Vibración';
-        testButton.style.position = 'fixed';
-        testButton.style.bottom = '150px';
-        testButton.style.left = '50%';
-        testButton.style.transform = 'translateX(-50%)';
-        testButton.style.zIndex = '9999';
-        testButton.style.backgroundColor = '#28a8b0';
-        testButton.style.color = 'white';
-        testButton.style.padding = '10px 20px';
-        testButton.style.borderRadius = '25px';
-        testButton.style.border = 'none';
-        
-        testButton.addEventListener('click', function() {
-            console.log('Intentando vibrar...');
-            
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
-                console.log('Usando Telegram HapticFeedback');
-                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-                setTimeout(() => {
-                    window.Telegram.WebApp.HapticFeedback.impactOccurred('heavy');
-                }, 300);
-            }
-            else if (navigator && navigator.vibrate) {
-                console.log('Usando navigator.vibrate');
-                navigator.vibrate(100);
-            }
-            else {
-                console.log('Ninguna API de vibración disponible');
-            }
-        });
-        
-        document.body.appendChild(testButton);
-    }
-
-    function init() {
-        preloadAnimations();
-        initDayFilters();
-        initSearchBar();
-        initCopyButtons();
-        initChannelButtons();
-        loadAndRenderData();
-        
-        // Añadir vibraciones
-        addVibrationsToAll();
-        
-        // Agregar botón de prueba para vibración (quitar en producción)
-        // addVibrationTester(); 
-
-        switchSection('home-section');
-
-        document.querySelectorAll('img').forEach(img => {
-            img.addEventListener('load', function () {
-                this.classList.add('loaded');
-            });
-        });
-
-        setTimeout(() => {
-            if (animations.profile && !animations.profile.isLoaded) {
-                animations.profile.destroy();
-                const profilePicContainer = document.querySelector('.profile-pic');
-                animations.profile = lottie.loadAnimation({
-                    container: profilePicContainer,
-                    renderer: 'svg',
-                    loop: true,
-                    autoplay: true,
-                    path: 'https://gist.githubusercontent.com/randomuserduh/9ade3d032819f88ba32f3114e6e5b6ff/raw/8331691d8b9841ddb96dc486202df609f1cb6dfa/profile.json'
+                document.querySelectorAll('img').forEach(img => {
+                    img.addEventListener('load', function () {
+                        this.classList.add('loaded');
+                    });
                 });
+
+                setTimeout(() => {
+                    if (animations.profile && !animations.profile.isLoaded) {
+                        animations.profile.destroy();
+                        const profilePicContainer = document.querySelector('.profile-pic');
+                        animations.profile = lottie.loadAnimation({
+                            container: profilePicContainer,
+                            renderer: 'svg',
+                            loop: true,
+                            autoplay: true,
+                            path: 'https://gist.githubusercontent.com/randomuserduh/9ade3d032819f88ba32f3114e6e5b6ff/raw/8331691d8b9841ddb96dc486202df609f1cb6dfa/profile.json'
+                        });
+                    }
+                }, 1000);
             }
-        }, 1000);
-    }
 
-    navButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const sectionId = this.getAttribute('data-section');
-            switchSection(sectionId);
+            init();
         });
-    });
-
-    init();
-});
     </script>
 </body>
 

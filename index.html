@@ -9,7 +9,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         // Inicializar y expandir la aplicación de Telegram
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             if (window.Telegram && window.Telegram.WebApp) {
                 console.log("Telegram WebApp detectado, expandiendo...");
                 window.Telegram.WebApp.expand();
@@ -183,16 +183,6 @@
             position: relative !important;
             pointer-events: auto !important;
             display: block !important;
-        }
-
-        #home-section.section-active,
-        #home-section {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-            position: relative;
-            pointer-events: auto;
-            display: block;
         }
 
         .home-section {

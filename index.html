@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Bunny</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
+    <script>
+        // Función para cargar los datos desde el archivo JSON
+        async function loadData() {
+            try {
+                const response = await fetch('data.json');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error cargando los datos:', error);
+                // Datos de respaldo en caso de error
+                return {
+                    cards: [],
+                    bencina: []
+                };
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,300;0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;1,6..12,300;1,6..12,600&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        * {
+            -webkit-touch-callout: none;
+            /* iOS Safari */
+            -webkit-user-select: none;
+            /* Safari */
+            -moz-user-select: none;
+            /* Firefox */
+            -ms-user-select: none;
+            /* Internet Explorer/Edge */
+            user-select: none;
+            /* Navegadores modernos */
+
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html,
+        body {
+            height: 100vh;
+            min-height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            touch-action: none;
+            background: #040707;
+            font-family: 'Roboto', sans-serif;
+            color: #ede7e3;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .header {
+            transition: opacity 0.3s ease;
+            width: 100%;
+            z-index: 10;
+            position: relative;
+        }
+
+        /* Estilos para el carrusel de días con días más juntos */
+        .day-carousel {
+            display: flex;
+            overflow-x: auto;
+            margin: 20px 0;
+            padding: 10px 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            justify-content: flex-start;
+            gap: 10px;
+            /* Eliminar espacio entre botones */
+            width: 100%;
+        }
+
+        .day-carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .day-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+            min-width: 52px;
+            /* Ligeramente más pequeño que original pero suficiente para el círculo */
+            flex: 0 0 52px;
+            margin: 0;
+            /* Eliminar márgenes */
+            padding: 0;
+            /* Eliminar padding */
+        }
+
+        .day-circle {
+            width: 50px;
+            /* Mantener tamaño original */
+            height: 50px;
+            /* Mantener tamaño original */
+            border-radius: 50%;
+            background-color: #1A1A1A;
+            border: 1px solid #3B3D3B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 0 auto;
+        }
+
+        .day-button.active .day-circle {
+            background-color: #28a8b0;
+            color: white;
+        }
+
+        .gas-row {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .gas-row.hidden {
+            display: none;
+        }
+
+        .day-filters {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        /* Mejora para las transiciones entre secciones */
+        .content {
+            position: relative;
+            overflow-x: hidden;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
+            padding: 20px;
+            padding-bottom: 80px;
+            will-change: transform;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        #cards-section,
+        #gas-section,
+        #info-section,
+        #home-section {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            transform: translateY(20px);
+            pointer-events: none;
+            display: none;
+            /* Añadir display none para asegurar que está completamente oculto */
+        }
+
+        .section-active {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateY(0) !important;
+            position: relative !important;
+            pointer-events: auto !important;
+            display: block !important;
+            /* Asegurar que se muestra */
+        }
+
+        /* Asegurarse que el home-section esté visible inicialmente */
+        #home-section.section-active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            position: relative;
+            pointer-events: auto;
+            display: block;
+        }
+
+        /* Asegurarse que el home-section esté visible inicialmente */
+        #home-section {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            position: relative;
+            pointer-events: auto;
+        }
+
+        .home-section {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            /* Espacio entre elementos */
+            width: 100%;
+        }
+
+        .welcome-message {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .welcome-message h2 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-message p {
+            color: #888;
+            font-size: 16px;
+        }
+
+        .channel-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 0;
+            padding: 0 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .channel-buttons button.clicked {
+            background-color: #479EB4 !important;
+            transition: background-color 0.3s ease;
+        }
+
+        .channel-buttons button {
+            background-color: #1C1C1E;
+            color: white;
+            border: 1px solid #3B3D3B;
+            padding: 15px;
+            text-align: center;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .vip-button {
+            background-color: #8A4FFF !important;
+            position: relative;
+        }
+
+        /* Estilos actualizados para el botón VIP y su animación */
+        .vip-button-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .channel-button.vip-button {
+            background-color: #8A4FFF !important;
+            color: white;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 25px;
+            text-align: center;
+            position: relative;
+            font-weight: bold;
+            z-index: 1;
+            /* Asegurar que el botón esté por encima */
+        }
+
+        #lottie-confetti {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            z-index: 999;
+            /* Aumentado */
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: block !important;
+            pointer-events: none;
+        }
+
+        #fullscreen-confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Header y perfil */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 30px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-pic {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: #242434;
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .greeting {
+            font-size: 16px;
+            color: #cccccc;
+        }
+
+        .brand-name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .chat-icon {
+            width: 50px;
+            height: 50px;
+            background-color: #3C3C3C;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Título de sección */
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            /* margin: 10px 0 20px; */
+            text-align: center;
+            color: #ede7e3;
+            width: 100%;
+        }
+
+        .about-us {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0 20px;
+            text-align: center;
+            color: #474747;
+            width: 100%;
+        }
+
+        /* Tarjeta de crédito destacada */
+        /* Ajustes para la tabla de tarjetas */
+        .card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #242434;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card-column {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Ajustar anchos específicos para cada columna */
+        .card-row .card-column:nth-child(1) {
+            flex: 2;
+        }
+
+        /* Banco */
+        .card-row .card-column:nth-child(2) {
+            flex: 1;
+        }
+
+        /* Tipo */
+        .card-row .card-column:nth-child(3) {
+            flex: 1;
+        }
+
+        /* Nivel */
+        .card-row .card-column:nth-child(4) {
+            flex: 1.5;
+        }
+
+        /* Números */
+
+        /* Modificar la tarjeta de crédito */
+        .credit-card {
+            background-color: #1A1A1A;
+            border: 1px solid #3B3D3B;
+            border-radius: 30px;
+            padding: 20px;
+            color: white;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(-10px);
+            /* Sube ligeramente la tarjeta */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            /* Añade una sombra suave */
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Ajustar texto de la tarjeta */
+        .card-balance {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .card-amount {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+
+        .card-number {
+            font-size: 18px;
+            letter-spacing: 2px;
+            opacity: 0.7;
+        }
+
+        .card-expiry {
+            font-size: 16px;
+            opacity: 0.7;
+        }
+
+        .card-type {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            font-size: 18px;
+        }
+
+        .mastercard-logo {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+        }
+
+        .mastercard-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+
+        .mastercard-circle:first-child {
+            background-color: #FD6887;
+            margin-right: -10px;
+        }
+
+        .mastercard-circle:last-child {
+            background-color: #FF8AA2;
+        }
+
+        /* Barra de búsqueda */
+        .search-container {
+            position: relative;
+            margin: 20px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .search-bar {
+            width: 100%;
+            height: 50px;
+            background-color: #1A1A1A;
+            border-radius: 25px;
+            border: 1px solid #3B3D3B;
+            padding: 0 50px 0 20px;
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .search-button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            width: 40px;
+            height: 40px;
+            background-color: #3C3C3C;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        /* Carrusel de bancos */
+        .bank-carousel {
+            display: flex;
+            gap: 15px;
+            overflow-x: auto;
+            margin: 20px 0;
+            padding: 10px 0;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .bank-carousel::-webkit-scrollbar {
+            display: none;
+        }
+
+        .bank-logo {
+            min-width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .bank-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Tabla de tarjetas */
+        /* Estilos para contenedor común de tabla */
+        .table-container {
+            width: 100%;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Estilos para el encabezado y filas de la tabla con grid templates idénticos */
+        .table-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 40px;
+            padding: 10px 0;
+            border-bottom: 1px solid #333343;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .table-header span {
+            font-size: 14px;
+            color: #8888a0;
+            text-transform: lowercase;
+            padding-left: 5px;
+            text-align: left;
+        }
+
+        /* Estilos para las filas de la tabla - exactamente el mismo grid-template que el header */
+        .card-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 40px;
+            /* IDÉNTICO al table-header */
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #242434;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .card-column {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            padding-left: 5px;
+            text-align: left;
+        }
+
+        /* Estilo para el botón de copiar */
+        .copy-button {
+            background: none;
+            border: none;
+            color: #8888a0;
+            cursor: pointer;
+            width: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Botón flotante para agregar */
+        .message-button {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background-color: #28a8b0;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            padding: 0;
+            /* Remove any padding */
+            overflow: hidden;
+            /* Ensure content doesn't overflow */
+        }
+
+        /* SVG styling for proper centering */
+        .message-button svg {
+            width: 25px;
+            /* Set appropriate width */
+            height: 25px;
+            /* Set appropriate height */
+            display: block;
+            /* Remove any extra space */
+            transform: scale(1.2);
+            /* Slightly increase size if needed */
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #28a8b0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 25px 25px 0 0;
+            padding: 8px 0;
+            z-index: 100;
+        }
+
+        .nav-button {
+            background: none;
+            border: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            height: 50px;
+            width: 60px;
+            margin: 0 0;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-text {
+            font-size: 12px;
+        }
+
+        .nav-button.active {
+            color: white;
+            font-weight: bold;
+        }
+
+        .nav-button:not(.active) {
+            opacity: 0.7;
+        }
+
+        /* Estilo específico para la sección de info */
+        body.info-active {
+            background: #ede7e3;
+        }
+
+        body.info-active .header {
+            display: none;
+        }
+
+        #info-section {
+            /* padding-top: 30px; */
+            text-align: center;
+        }
+
+        #info-section p {
+            margin: 0 auto;
+            max-width: 80%;
+            line-height: 1.5;
+            font-size: 14px;
+            color: #040707;
+        }
+
+        #animation-container-bunny {
+            width: 70%;
+            /* height: 250px; */
+            /* Ajusta la altura según necesites */
+            margin: 0 auto;
+            /* Esto centra horizontalmente */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .social-icons a {
+            transition: transform 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            transform: scale(1.15);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header con foto de perfil -->
+    <div class="header">
+        <div class="profile">
+            <div class="profile-pic">
+                <!-- La animación lottie reemplazará este contenido -->
+            </div>
+            <div class="profile-info">
+                <div class="greeting">Hola! 👋</div>
+                <div class="brand-name">Somos bunny 🥕</div>
+            </div>
+        </div>
+        <div class="chat-icon">
+            <a href="https://t.me/bunnymoney_chat">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M18.4698 16.83L18.8598 19.99C18.9598 20.82 18.0698 21.4 17.3598 20.97L13.1698 18.48C12.7098 18.48 12.2599 18.45 11.8199 18.39C12.5599 17.52 12.9998 16.42 12.9998 15.23C12.9998 12.39 10.5398 10.09 7.49985 10.09C6.33985 10.09 5.26985 10.42 4.37985 11C4.34985 10.75 4.33984 10.5 4.33984 10.24C4.33984 5.68999 8.28985 2 13.1698 2C18.0498 2 21.9998 5.68999 21.9998 10.24C21.9998 12.94 20.6098 15.33 18.4698 16.83Z"
+                        stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <path
+                        d="M13 15.23C13 16.42 12.56 17.52 11.82 18.39C10.83 19.59 9.26 20.36 7.5 20.36L4.89 21.91C4.45 22.18 3.89 21.81 3.95 21.3L4.2 19.33C2.86 18.4 2 16.91 2 15.23C2 13.47 2.94 11.92 4.38 11C5.27 10.42 6.34 10.09 7.5 10.09C10.54 10.09 13 12.39 13 15.23Z"
+                        stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="content">
+        <!-- Sección de tarjetas (visible al inicio) -->
+        <div id="cards-section">
+            <!-- Búsqueda -->
+            <div class="search-container">
+                <input type="text" class="search-bar" placeholder="Buscar tarjeta...">
+                <button class="search-button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z"
+                            fill="white" />
+                    </svg>
+                </button>
+            </div>
+        
+            <!-- Carrusel de bancos -->
+            <div class="bank-carousel">
+                <div class="bank-logo">
+                    <img src="https://yt3.googleusercontent.com/lBymkN0YTkgchqTSnYSI5a4F3NZV9UUbAm28MOic-tRWWjqvD2q4gqOUFpLb7KAk2S8FuK5MrK8=s900-c-k-c0x00ffffff-no-rj"
+                        alt="Logo Banco" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="bank-logo">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSZHct7ieoxTNFAU0-rzE6XoMcLVVAy_hTYRg&s"
+                        alt="Logo Banco" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="bank-logo">
+                    <img src="https://yt3.googleusercontent.com/L9EXvWBXOkkNFynNbdAAEwaGVSblUJIFP_XE2Cuene4CgZd-3F9zGbJ3cCA389MTOK17U2gdCQ=s900-c-k-c0x00ffffff-no-rj"
+                        alt="Logo Banco" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="bank-logo">
+                    <img src="https://designconceitual.com.br/wp-content/uploads/2023/12/Ita%C3%BA-novo-logotipo-2023-1000x600.jpg"
+                        alt="Logo Banco" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="bank-logo" style="background-color: #4F2F98;">
+                    <span style="color: white; font-weight: bold;">R</span>
+                </div>
+                <div class="bank-logo" style="background-color: #052D91;">
+                    <span style="color: white; font-weight: bold;">B</span>
+                </div>
+                <div class="bank-logo" style="background-color: #E30613;">
+                    <span style="color: white; font-weight: bold;">S</span>
+                </div>
+                <div class="bank-logo" style="background-color: #F58220;">
+                    <span style="color: white; font-weight: bold;">I</span>
+                </div>
+            </div>
+        
+            <!-- Tabla de tarjetas -->
+            <div class="table-header">
+                <span>Banco</span>
+                <span>tipo</span>
+                <span>nivel</span>
+                <span>números</span>
+                <span></span>
+            </div>
+            
+            <!-- Contenedor para las filas de tarjetas generadas dinámicamente -->
+            <div id="card-rows-container">
+                <!-- Las filas se generarán dinámicamente con JavaScript -->
+            </div>
+        </div>
+        <!-- Home Section con diseño exacto -->
+        <div id="home-section">
+            <div class="home-content">
+                <div class="welcome-message">
+                    <h2>¡Welcome!</h2>
+                    <p>Revisa aquí a los canales que te puedes unir, números de tarjeta y descuentos de bencina.
+                    </p>
+                </div>
+
+                <div class="channel-buttons">
+                    <button onclick="window.open('https://t.me/bunnymoney_chat', '')">Canal de Chat</button>
+                    <button onclick="window.open('https://t.me/bunnymoney_40', '')">Canal de ofertas
+                        40%</button>
+                    <button onclick="window.open('https://t.me/bunnymoney_60', '')">Canal de ofertas
+                        60%</button>
+                    <button onclick="window.open('https://t.me/bunnymoney_80', '')">Canal de ofertas
+                        80%</button>
+                    <button onclick="window.open('https://t.me/+Ekegknch0vJkNzFh', '')">Canal de ventas</button>
+                    <a href="https://t.me/tiobunny">
+                        <div class="vip-button-container">
+                            <button class="channel-button vip-button">Acceso VIP</button>
+                            <div id="lottie-confetti"></div>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div id="gas-section">
+            <h2 class="section-title">MARZO</h2>
+        
+            <!-- Contenedor para la animación con Lottie -->
+            <div id="car-animation-container" style="text-align: center; margin: 20px 0; height: 150px;"></div>
+        
+            <!-- Carrusel de días de la semana - FIJADO -->
+            <div class="day-carousel">
+                <button class="day-button active" data-day="all">
+                    <div class="day-circle">T</div>
+                </button>
+                <button class="day-button" data-day="Lunes">
+                    <div class="day-circle">L</div>
+                </button>
+                <button class="day-button" data-day="Martes">
+                    <div class="day-circle">M</div>
+                </button>
+                <button class="day-button" data-day="Miércoles">
+                    <div class="day-circle">M</div>
+                </button>
+                <button class="day-button" data-day="Jueves">
+                    <div class="day-circle">J</div>
+                </button>
+                <button class="day-button" data-day="Viernes">
+                    <div class="day-circle">V</div>
+                </button>
+                <button class="day-button" data-day="Sábado">
+                    <div class="day-circle">S</div>
+                </button>
+                <button class="day-button" data-day="Domingo">
+                    <div class="day-circle">D</div>
+                </button>
+            </div>
+        
+            <!-- Tabla de descuentos -->
+            <div class="table-header">
+                <span>Tarjeta</span>
+                <span>Día</span>
+                <span>Local</span>
+                <span>$/Litro</span>
+            </div>
+            
+            <!-- Contenedor para las filas de bencina generadas dinámicamente -->
+            <div id="gas-rows-container">
+                <!-- Las filas se generarán dinámicamente con JavaScript -->
+            </div>
+        </div>
+        
+        <div id="info-section">
+            <!-- Contenido de la sección Info -->
+            <div id="animation-container-bunny"></div>
+            <h2 class="about-us">Sobre nosotros</h2>
+            <p>Somos bunnymoney y estamos aquí para traerte ofertas y oportunidades de ahorro. Puedes encontrarnos en el
+                nuestro grupo uniéndote gratis al chat de abajo!</p>
+            <h3 style="color: #040707; font-size: 18px; margin-top: 30px; margin-bottom: 15px;">¡Síguenos!</h3>
+
+            <div class="social-icons">
+                <a href="https://www.instagram.com/bunnymoney_cl" target=""
+                    style="margin: 0 10px; display: inline-block;">
+                    <svg width="40" height="40" viewBox="0 0 134 134" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M110.116 31.0217C110.116 26.599 106.531 23.028 102.125 23.028C97.7189 23.028 94.1313 26.599 94.1313 31.0217C94.1313 35.4281 97.7189 38.9991 102.125 38.9991C106.531 38.9991 110.116 35.4281 110.116 31.0217Z"
+                            fill="url(#paint0_linear_301_18)" />
+                        <path
+                            d="M120.763 93.42C120.467 99.9079 119.382 103.433 118.481 105.774C117.271 108.878 115.828 111.098 113.486 113.426C111.171 115.754 108.952 117.194 105.848 118.391C103.506 119.305 99.9681 120.394 93.4805 120.703C86.4666 121.012 84.3883 121.078 66.602 121.078C48.8322 121.078 46.7374 121.012 39.7235 120.703C33.2359 120.394 29.7142 119.305 27.3727 118.391C24.2522 117.194 22.0492 115.754 19.7211 113.426C17.3764 111.098 15.933 108.878 14.7393 105.774C13.8382 103.433 12.7368 99.9079 12.4571 93.42C12.1153 86.4061 12.0526 84.2951 12.0526 66.545C12.0526 48.7587 12.1153 46.6639 12.4571 39.65C12.7368 33.1624 13.8382 29.6406 14.7393 27.2795C15.933 24.1787 17.3764 21.9722 19.7211 19.6441C22.0492 17.3194 24.2522 15.8757 27.3727 14.6658C29.7142 13.7484 33.2359 12.6763 39.7235 12.3673C46.7374 12.058 48.8322 11.9791 66.602 11.9791C84.3883 11.9791 86.4666 12.058 93.4805 12.3673C99.9681 12.6763 103.506 13.7484 105.848 14.6658C108.952 15.8757 111.171 17.3194 113.486 19.6441C115.828 21.9722 117.271 24.1787 118.481 27.2795C119.382 29.6406 120.467 33.1624 120.763 39.65C121.089 46.6639 121.168 48.7587 121.168 66.545C121.168 84.2951 121.089 86.4061 120.763 93.42ZM132.743 39.1042C132.417 32.0146 131.299 27.171 129.638 22.9523C127.948 18.5755 125.683 14.8663 121.973 11.1571C118.281 7.46446 114.572 5.19875 110.195 3.48894C105.96 1.84471 101.132 0.713455 94.0393 0.404434C86.9465 0.0623779 84.681 -3.05176e-05 66.602 -3.05176e-05C48.5395 -3.05176e-05 46.2575 0.0623779 39.1647 0.404434C32.0881 0.713455 27.2642 1.84471 23.0093 3.48894C18.649 5.19875 14.9398 7.46446 11.2472 11.1571C7.538 14.8663 5.27229 18.5755 3.56567 22.9523C1.92145 27.171 0.803515 32.0146 0.461452 39.1042C0.152436 46.197 0.0735168 48.466 0.0735168 66.545C0.0735168 84.6075 0.152436 86.873 0.461452 93.9658C0.803515 101.042 1.92145 105.883 3.56567 110.121C5.27229 114.481 7.538 118.207 11.2472 121.9C14.9398 125.592 18.649 127.875 23.0093 129.581C27.2642 131.225 32.0881 132.343 39.1647 132.669C46.2575 132.995 48.5395 133.073 66.602 133.073C84.681 133.073 86.9465 132.995 94.0393 132.669C101.132 132.343 105.96 131.225 110.195 129.581C114.572 127.875 118.281 125.592 121.973 121.9C125.683 118.207 127.948 114.481 129.638 110.121C131.299 105.883 132.417 101.042 132.743 93.9658C133.068 86.873 133.147 84.6075 133.147 66.545C133.147 48.466 133.068 46.197 132.743 39.1042Z"
+                            fill="url(#paint1_linear_301_18)" />
+                        <path
+                            d="M66.602 88.7046C54.3597 88.7046 44.4258 78.787 44.4258 66.5447C44.4258 54.2827 54.3597 44.3523 66.602 44.3523C78.8477 44.3523 88.7947 54.2827 88.7947 66.5447C88.7947 78.787 78.8477 88.7046 66.602 88.7046ZM66.602 32.3566C47.7305 32.3566 32.4467 47.6733 32.4467 66.5447C32.4467 85.3999 47.7305 100.7 66.602 100.7C85.4734 100.7 100.774 85.3999 100.774 66.5447C100.774 47.6733 85.4734 32.3566 66.602 32.3566Z"
+                            fill="url(#paint2_linear_301_18)" />
+                        <defs>
+                            <linearGradient id="paint0_linear_301_18" x1="1.27375" y1="131.698" x2="122.063"
+                                y2="10.9086" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#FFD521" />
+                                <stop offset="0.05" stop-color="#FFD521" />
+                                <stop offset="0.501119" stop-color="#F50000" />
+                                <stop offset="0.95" stop-color="#B900B4" />
+                                <stop offset="0.950079" stop-color="#B900B4" />
+                                <stop offset="1" stop-color="#B900B4" />
+                            </linearGradient>
+                            <linearGradient id="paint1_linear_301_18" x1="1.27382" y1="131.863" x2="122.163"
+                                y2="10.9746" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#FFD521" />
+                                <stop offset="0.05" stop-color="#FFD521" />
+                                <stop offset="0.501119" stop-color="#F50000" />
+                                <stop offset="0.95" stop-color="#B900B4" />
+                                <stop offset="0.950079" stop-color="#B900B4" />
+                                <stop offset="1" stop-color="#B900B4" />
+                            </linearGradient>
+                            <linearGradient id="paint2_linear_301_18" x1="1.30515" y1="131.867" x2="122.165"
+                                y2="11.0069" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#FFD521" />
+                                <stop offset="0.05" stop-color="#FFD521" />
+                                <stop offset="0.501119" stop-color="#F50000" />
+                                <stop offset="0.95" stop-color="#B900B4" />
+                                <stop offset="0.950079" stop-color="#B900B4" />
+                                <stop offset="1" stop-color="#B900B4" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </a>
+                <a href="https://www.threads.net/@bunnymoney_cl" target=""
+                    style="margin: 0 10px; display: inline-block;">
+                    <svg width="40" height="40" viewBox="0 0 826 960" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M642.685 444.941C638.55 442.959 634.35 441.052 630.095 439.225C622.685 302.691 548.08 224.525 422.809 223.725C422.242 223.721 421.677 223.721 421.11 223.721C346.182 223.721 283.866 255.704 245.51 313.904L314.405 361.164C343.058 317.692 388.026 308.424 421.143 308.424C421.526 308.424 421.91 308.424 422.288 308.427C463.535 308.69 494.66 320.683 514.805 344.07C529.465 361.097 539.27 384.625 544.125 414.319C507.555 408.103 468.005 406.192 425.725 408.616C306.623 415.477 230.055 484.94 235.198 581.46C237.807 630.42 262.199 672.54 303.875 700.055C339.112 723.315 384.495 734.69 431.661 732.115C493.95 728.7 542.815 704.935 576.905 661.48C602.795 628.48 619.17 585.715 626.4 531.83C656.085 549.745 678.085 573.32 690.235 601.66C710.895 649.835 712.1 729 647.505 793.54C590.91 850.08 522.88 874.54 420.067 875.295C306.021 874.45 219.769 837.875 163.69 766.585C111.177 699.83 84.0385 603.41 83.026 480C84.0385 356.589 111.177 260.168 163.69 193.414C219.769 122.125 306.02 85.55 420.066 84.7025C534.94 85.5565 622.695 122.307 680.92 193.94C709.47 229.068 730.995 273.244 745.185 324.752L825.92 303.211C808.72 239.811 781.655 185.178 744.825 139.87C670.18 48.0334 561.01 0.97574 420.348 0H419.785C279.408 0.97235 171.46 48.209 98.9415 140.396C34.4095 222.432 1.122 336.579 0.00349998 479.663L0 480L0.00349998 480.337C1.122 623.42 34.4095 737.57 98.9415 819.605C171.46 911.79 279.408 959.03 419.785 960H420.348C545.15 959.135 633.12 926.46 705.59 854.055C800.405 759.33 797.55 640.595 766.3 567.705C743.88 515.435 701.135 472.981 642.685 444.941ZM427.202 647.535C375.003 650.475 320.772 627.045 318.098 576.86C316.116 539.65 344.579 498.13 430.406 493.184C440.235 492.617 449.88 492.34 459.355 492.34C490.53 492.34 519.695 495.368 546.21 501.165C536.32 624.675 478.31 644.73 427.202 647.535Z"
+                            fill="black" />
+                    </svg>
+
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Navbar inferior -->
+    <div class="navbar">
+        <button class="nav-button active" data-section="home-section">
+            <div class="nav-icon">
+                <svg width="35" height="35" viewBox="0 0 35 37" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M7.29167 19.6711C7.29167 17.5779 7.29167 16.5312 7.69193 15.6113C8.09218 14.6913 8.84387 14.0102 10.3472 12.6479L11.8056 11.3265C14.5229 8.86427 15.8816 7.63315 17.5 7.63315C19.1184 7.63315 20.4771 8.86427 23.1944 11.3265L24.6528 12.6479C26.1561 14.0102 26.9078 14.6913 27.3081 15.6113C27.7083 16.5312 27.7083 17.5779 27.7083 19.6711V26.2083C27.7083 29.1153 27.7083 30.5688 26.8541 31.4719C25.9998 32.375 24.6249 32.375 21.875 32.375H13.125C10.3751 32.375 9.00022 32.375 8.14594 31.4719C7.29167 30.5688 7.29167 29.1153 7.29167 26.2083V19.6711Z"
+                        stroke="white" stroke-width="2" />
+                    <path
+                        d="M21.1458 32.375V24.125C21.1458 23.5727 20.6981 23.125 20.1458 23.125H14.8542C14.3019 23.125 13.8542 23.5727 13.8542 24.125V32.375"
+                        stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+
+            </div>
+            <!-- <div class="nav-text">Home</div> -->
+        </button>
+        <button class="nav-button" data-section="cards-section">
+            <div class="nav-icon">
+                <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="4.375" y="8.75" width="26.25" height="18.9583" rx="2" stroke="white" stroke-width="2" />
+                    <path d="M10.2083 21.875H10.2223" stroke="white" stroke-width="2" stroke-linecap="round" />
+                    <path d="M5.83333 16.0417H30.625" stroke="white" stroke-width="2" stroke-linecap="round" />
+                </svg>
+
+            </div>
+            <!-- <div class="nav-text">Tarjetas</div> -->
+        </button>
+        <button class="nav-button" data-section="gas-section">
+            <div class="nav-icon">
+                <svg width="35" height="35" viewBox="0 0 43 43" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="28.6667" cy="34.0417" r="3.58333" stroke="white" stroke-width="2" />
+                    <circle cx="16.125" cy="34.0417" r="3.58333" stroke="white" stroke-width="2" />
+                    <path
+                        d="M8.95833 25.0833H19.7083V12.5417M19.7083 12.5417V16.125H7.16666V32.0417C7.16666 33.1462 8.06209 34.0417 9.16666 34.0417H12.5417M19.7083 12.5417H26.875L35.458 19.4081C35.6952 19.5979 35.8333 19.8852 35.8333 20.1889V23.2917M30.4583 16.125H28.6667V23.2917H35.8333M35.8333 23.2917V32.0417C35.8333 33.1462 34.9379 34.0417 33.8333 34.0417H32.25M25.0833 34.0417H19.7083"
+                        stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+
+            </div>
+            <!-- <div class="nav-text">Bencinas</div> -->
+        </button>
+        <button class="nav-button" data-section="info-section">
+            <div class="nav-icon">
+                <svg width="35" height="35" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="16.5" cy="16.5" r="12.375" stroke="white" stroke-width="2" />
+                    <path
+                        d="M17.1875 10.3125C17.1875 10.6922 16.8797 11 16.5 11C16.1203 11 15.8125 10.6922 15.8125 10.3125C15.8125 9.9328 16.1203 9.625 16.5 9.625C16.8797 9.625 17.1875 9.9328 17.1875 10.3125Z"
+                        fill="white" stroke="white" />
+                    <path d="M16.5 23.375V13.75" stroke="white" stroke-width="2" />
+                </svg>
+
+            </div>
+            <!-- <div class="nav-text">Info</div> -->
+        </button>
+    </div>
+
+    <script>
+// Script principal para la aplicación Bunny
+document.addEventListener('DOMContentLoaded', function () {
+    // 1. CARGA DE DATOS
+    // Función para cargar los datos desde el archivo JSON
+    async function loadData() {
+        try {
+            const response = await fetch('data.json');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error cargando los datos:', error);
+            // Datos de respaldo en caso de error
+            return {
+                cards: [],
+                bencina: []
+            };
+        }
+    }
+
+    // 2. INICIALIZACIÓN DE COMPONENTES
+    // Referencias a elementos
+    const navButtons = document.querySelectorAll('.nav-button');
+    const sections = document.querySelectorAll('#home-section, #cards-section, #gas-section, #info-section');
+    const body = document.body;
+
+    // Inicializar todas las animaciones Lottie apenas carga la página
+    let animations = {
+        profile: null,
+        car: null,
+        bunny: null,
+        vip: null
+    };
+
+    // 3. CONFIGURACIÓN DE EVENTOS Y PREVENCIÓN DE INTERACCIONES NO DESEADAS
+    document.addEventListener('touchstart', function (e) {
+        if (e.touches.length > 1) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // 4. FUNCIONES PRINCIPALES
+    // Función para inicializar todas las animaciones
+    function preloadAnimations() {
+        // Inicializar animación de perfil
+        const profilePicContainer = document.querySelector('.profile-pic');
+        if (profilePicContainer) {
+            profilePicContainer.innerHTML = '';
+            animations.profile = lottie.loadAnimation({
+                container: profilePicContainer,
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: 'https://gist.githubusercontent.com/jenyferis/cd826553df578523d7b3abf058ab93ab/raw/b6dffb79343b439d8fdbd7223c55f8e3a8c6fc7b/perfil.json'
+            });
+        }
+
+        // Pre-cargar animación del coche
+        const carContainer = document.getElementById('car-animation-container');
+        if (carContainer) {
+            animations.car = lottie.loadAnimation({
+                container: carContainer,
+                renderer: 'svg',
+                loop: true,
+                autoplay: false, // Inicialmente no reproducir
+                path: 'https://gist.githubusercontent.com/jenyferis/c81b00183c4d8165860c17ffa7977eb6/raw/c8b457c8c72942696eaefdd410877407c770b302/conductor.json'
+            });
+            animations.car.goToAndStop(0, true); // Pausa en el primer frame
+        }
+
+        // Pre-cargar animación del conejo
+        const bunnyContainer = document.getElementById('animation-container-bunny');
+        if (bunnyContainer) {
+            animations.bunny = lottie.loadAnimation({
+                container: bunnyContainer,
+                renderer: 'svg',
+                loop: true,
+                autoplay: false, // Inicialmente no reproducir
+                path: 'https://gist.githubusercontent.com/jenyferis/68a1cda0a8c3616e4b4c2e33093043eb/raw/e6582aa858d463dbfcaf96603e8ba80fd4c3b422/conejo.json'
+            });
+            animations.bunny.goToAndStop(0, true); // Pausa en el primer frame
+        }
+
+        // Inicializar animación VIP
+        const confettiContainer = document.getElementById('lottie-confetti');
+        if (confettiContainer) {
+            confettiContainer.innerHTML = '';
+            animations.vip = lottie.loadAnimation({
+                container: confettiContainer,
+                renderer: 'svg',
+                loop: true,
+                autoplay: true,
+                path: 'https://gist.githubusercontent.com/jenyferis/fa2b2bf60f88cb3647f41ef9542db7f7/raw/a95bd6e0a0cca9f15227aaba6fc22bf7f1b36214/vip.json'
+            });
+        }
+    }
+
+    // Gestión de transiciones entre secciones con mejor rendimiento
+    function switchSection(sectionId) {
+        // Si ya estamos en esta sección, no hacer nada
+        if (document.getElementById(sectionId).classList.contains('section-active')) {
+            return;
+        }
+
+        // Desactivar todas las secciones actuales primero
+        sections.forEach(section => {
+            section.classList.remove('section-active');
+        });
+
+        // Actualizar los botones de navegación
+        navButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-section') === sectionId) {
+                btn.classList.add('active');
+            }
+        });
+
+        // Cambiar fondo para la sección info
+        if (sectionId === 'info-section') {
+            body.classList.add('info-active');
+        } else {
+            body.classList.remove('info-active');
+        }
+
+        // Activar la nueva sección con un pequeño retraso para permitir que la transición de ocultamiento termine
+        const targetSection = document.getElementById(sectionId);
+
+        // Pequeño retraso para la animación fluida
+        setTimeout(() => {
+            targetSection.classList.add('section-active');
+
+            // Activar animaciones específicas para cada sección
+            if (sectionId === 'gas-section' && animations.car) {
+                animations.car.goToAndPlay(0, true);
+            } else if (sectionId === 'info-section' && animations.bunny) {
+                animations.bunny.goToAndPlay(0, true);
+            }
+        }, 100); // Aumentado ligeramente el tiempo de retraso
+    }
+
+    // Filtros de días para la sección de gas
+    function initDayFilters() {
+        const dayButtons = document.querySelectorAll('.day-button');
+        const gasRows = document.querySelectorAll('.gas-row');
+
+        dayButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Desactivar todos los botones
+                dayButtons.forEach(btn => btn.classList.remove('active'));
+
+                // Activar el botón actual
+                this.classList.add('active');
+
+                // Obtener el día seleccionado
+                const selectedDay = this.getAttribute('data-day');
+
+                // Filtrar filas
+                gasRows.forEach(row => {
+                    if (selectedDay === 'all' || row.getAttribute('data-day') === selectedDay) {
+                        row.classList.remove('hidden');
+                    } else {
+                        row.classList.add('hidden');
+                    }
+                });
+
+                // Centrar el botón en el carrusel con animación suave
+                const carousel = document.querySelector('.day-carousel');
+                const buttonRect = button.getBoundingClientRect();
+                const carouselRect = carousel.getBoundingClientRect();
+
+                const scrollLeft = buttonRect.left - carouselRect.left -
+                    (carouselRect.width / 2) + (buttonRect.width / 2);
+
+                carousel.scrollTo({
+                    left: carousel.scrollLeft + scrollLeft,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    }
+
+    // Funcionalidad de búsqueda
+    function initSearchBar() {
+        const searchBar = document.querySelector('.search-bar');
+        if (searchBar) {
+            searchBar.addEventListener('input', function () {
+                const searchTerm = this.value.toLowerCase().trim();
+                const rows = document.querySelectorAll('#cards-section .card-row');
+
+                rows.forEach(row => {
+                    const text = Array.from(row.querySelectorAll('.card-column'))
+                        .map(col => col.textContent.toLowerCase())
+                        .join(' ');
+
+                    if (text.includes(searchTerm)) {
+                        row.style.display = 'grid';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+    }
+
+    // Funcionalidad de copiar
+    function initCopyButtons() {
+        const copyButtons = document.querySelectorAll('.copy-button');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const row = this.closest('.card-row');
+                const cardDetails = Array.from(row.querySelectorAll('.card-column'))
+                    .map(col => col.textContent)
+                    .join(' - ');
+
+                // Copiar al portapapeles
+                navigator.clipboard.writeText(cardDetails)
+                    .then(() => {
+                        // Cambiar el ícono temporalmente para indicar éxito
+                        this.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="#4CAF50"/>
+                    </svg>
+                `;
+
+                        // Volver al ícono original después de 2 segundos
+                        setTimeout(() => {
+                            this.innerHTML = `
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="#8888A0"/>
+                        </svg>
+                    `;
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        console.error('Error al copiar: ', err);
+                    });
+            });
+        });
+    }
+
+    // Efecto visual para los botones del canal
+    function initChannelButtons() {
+        const homeButtons = document.querySelectorAll('.channel-buttons button:not(.vip-button)');
+        homeButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                // Añadir clase de clickeado para efecto visual
+                this.classList.add('clicked');
+
+                // Remover la clase después de la transición
+                setTimeout(() => {
+                    this.classList.remove('clicked');
+                }, 300);
+            });
+        });
+    }
+
+    // 5. CARGA DE DATOS DESDE JSON
+    async function loadAndRenderData() {
+        try {
+            // Cargar los datos desde el JSON
+            const data = await loadData();
+            console.log("Datos cargados:", data); // Para depuración
+            
+            // Verificar que se obtuvieron los datos
+            if (!data || !data.cards || !data.bencina) {
+                console.error("No se pudieron cargar los datos o el formato es incorrecto");
+                return;
+            }
+            
+            // Generar las filas de tarjetas dinámicamente
+            const cardRowsContainer = document.getElementById('card-rows-container');
+            if (cardRowsContainer) {
+                cardRowsContainer.innerHTML = '';
+                
+                data.cards.forEach(card => {
+                    const row = document.createElement('div');
+                    row.className = 'card-row';
+                    row.innerHTML = `
+                        <div class="card-column">${card.banco}</div>
+                        <div class="card-column">${card.tipo}</div>
+                        <div class="card-column">${card.nivel}</div>
+                        <div class="card-column">${card.numeros}</div>
+                        <button class="copy-button">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"
+                                    fill="#8888A0" />
+                            </svg>
+                        </button>
+                    `;
+                    cardRowsContainer.appendChild(row);
+                });
+                
+                // Reinicializar los botones de copiar después de agregar las filas
+                initCopyButtons();
+            } else {
+                console.error("No se encontró el contenedor de filas de tarjetas");
+            }
+            
+            // Generar las filas de bencina dinámicamente
+            const gasRowsContainer = document.getElementById('gas-rows-container');
+            if (gasRowsContainer) {
+                gasRowsContainer.innerHTML = '';
+                
+                data.bencina.forEach(item => {
+                    const row = document.createElement('div');
+                    row.className = 'card-row gas-row';
+                    row.setAttribute('data-day', item.dia);
+                    row.innerHTML = `
+                        <div class="card-column">${item.tarjeta}</div>
+                        <div class="card-column">${item.diaCorto}</div>
+                        <div class="card-column">${item.local}</div>
+                        <div class="card-column">${item.descuento}</div>
+                    `;
+                    gasRowsContainer.appendChild(row);
+                });
+                
+                // Actualizar filtros después de agregar filas
+                initDayFilters();
+            } else {
+                console.error("No se encontró el contenedor de filas de bencina");
+            }
+        } catch (error) {
+            console.error("Error al cargar o procesar los datos:", error);
+        }
+    }
+
+    // 6. INICIALIZACIÓN DE LA APLICACIÓN
+    // Detectar si el dispositivo es táctil
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    // Desactivar efectos hover en dispositivos táctiles
+    if (isTouchDevice) {
+        document.documentElement.classList.add('touch-device');
+    }
+
+    // Inicializar todas las funcionalidades
+    function init() {
+        preloadAnimations();
+        initDayFilters();
+        initSearchBar();
+        initCopyButtons();
+        initChannelButtons();
+        
+        // Cargar datos desde JSON
+        loadAndRenderData();
+
+        // Iniciar en la sección home
+        switchSection('home-section');
+
+        // Mejorar el rendimiento evitando la re-renderización innecesaria
+        document.querySelectorAll('img').forEach(img => {
+            img.addEventListener('load', function () {
+                this.classList.add('loaded');
+            });
+        });
+
+        // Si no aparece alguna animación, intentar cargarla de nuevo
+        setTimeout(() => {
+            if (animations.profile && !animations.profile.isLoaded) {
+                animations.profile.destroy();
+                const profilePicContainer = document.querySelector('.profile-pic');
+                animations.profile = lottie.loadAnimation({
+                    container: profilePicContainer,
+                    renderer: 'svg',
+                    loop: true,
+                    autoplay: true,
+                    path: 'https://gist.githubusercontent.com/jenyferis/cd826553df578523d7b3abf058ab93ab/raw/b6dffb79343b439d8fdbd7223c55f8e3a8c6fc7b/perfil.json'
+                });
+            }
+        }, 1000);
+    }
+
+    // Inicializar handlers de navegación
+    navButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const sectionId = this.getAttribute('data-section');
+            switchSection(sectionId);
+        });
+    });
+
+    // Iniciar la aplicación
+    init();
+});
+    </script>
+</body>
+
+</html>

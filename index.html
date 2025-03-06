@@ -1125,7 +1125,6 @@
                 copyButtons.forEach(button => {
                     button.addEventListener('click', function () {
                         const row = this.closest('.card-row');
-                        // Solo obtenemos el número (cuarta columna) en lugar de toda la línea
                         const numberElement = row.querySelector('.card-column:nth-child(4)');
 
                         if (numberElement) {

@@ -1073,19 +1073,20 @@
                 dayButtons.forEach(button => {
                     button.addEventListener('click', function () {
                         dayButtons.forEach(btn => btn.classList.remove('active'));
-
                         this.classList.add('active');
 
                         const selectedDay = this.getAttribute('data-day');
 
                         gasRows.forEach(row => {
-                            if (selectedDay === 'all' || row.getAttribute('data-day') === selectedDay) {
+                            const rowDay = row.getAttribute('data-day');
+                            if (selectedDay === 'all' || rowDay === selectedDay || rowDay === 'Todos') {
                                 row.classList.remove('hidden');
                             } else {
                                 row.classList.add('hidden');
                             }
                         });
 
+                        // Scroll handling code...
                         const carousel = document.querySelector('.day-carousel');
                         const buttonRect = button.getBoundingClientRect();
                         const carouselRect = carousel.getBoundingClientRect();
@@ -1100,7 +1101,6 @@
                     });
                 });
             }
-
             function initSearchBar() {
                 const searchBar = document.querySelector('.search-bar');
                 if (searchBar) {

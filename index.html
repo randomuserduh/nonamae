@@ -954,25 +954,6 @@
                 console.log("No se detectó Telegram WebApp");
             }
 
-            function vibrar() {
-                if (window.Telegram && Telegram.WebApp) {
-                    Telegram.WebApp.HapticFeedback.impactOccurred("medium"); // Vibración media en Telegram
-                } else if (navigator.vibrate) {
-                    navigator.vibrate(50); // Vibración estándar si Telegram no está disponible
-                }
-            }
-
-            // Añadir vibración a todos los botones
-            document.querySelectorAll('button, .nav-button').forEach(button => {
-                button.addEventListener('click', vibrar);
-            });
-
-            // También añadir vibración a enlaces con `a` si lo deseas
-            document.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', vibrar);
-            });
-
-
             async function loadData() {
                 try {
                     const response = await fetch('data.json');

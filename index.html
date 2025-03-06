@@ -8,7 +8,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // Inicializar y expandir la aplicación de Telegram
         document.addEventListener('DOMContentLoaded', function () {
             if (window.Telegram && window.Telegram.WebApp) {
                 console.log("Telegram WebApp detectado, expandiendo...");
@@ -796,7 +795,7 @@
         </div>
 
         <div id="gas-section">
-            <h2 class="section-title">MARZO</h2>
+            <h2 class="section-title">Bencinas MARZO</h2>
             <div id="car-animation-container" style="text-align: center; margin: 20px 0; height: 150px;"></div>
 
             <div class="day-carousel">
@@ -946,6 +945,15 @@
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Inicializar y expandir la aplicación de Telegram
+            if (window.Telegram && window.Telegram.WebApp) {
+                console.log("Telegram WebApp detectado, expandiendo...");
+                window.Telegram.WebApp.expand();
+                window.Telegram.WebApp.setBackgroundColor('#040707');
+            } else {
+                console.log("No se detectó Telegram WebApp");
+            }
+
             async function loadData() {
                 try {
                     const response = await fetch('data.json');
@@ -980,6 +988,83 @@
             }, { passive: false });
 
             document.addEventListener('contextmenu', event => event.preventDefault());
+
+            // Función para vibrar el dispositivo
+            function vibrate(duration = 30) {
+                if (navigator && navigator.vibrate) {
+                    navigator.vibrate(duration);
+                }
+            }
+
+            // Función para agregar vibraciones a todos los elementos interactivos
+            function addVibrationsToAll() {
+                // 1. Botones de navegación
+                const navButtons = document.querySelectorAll('.nav-button');
+                navButtons.forEach(button => {
+                    const originalClickListener = button.onclick;
+                    button.addEventListener('click', function () {
+                        vibrate(25); // Vibración corta para navegación principal
+                    });
+                });
+
+                // 2. Botones de canal en home
+                const channelButtons = document.querySelectorAll('.channel-buttons button, .vip-button-container button');
+                channelButtons.forEach(button => {
+                    const originalClickListener = button.onclick;
+                    button.addEventListener('click', function () {
+                        vibrate(40); // Vibración más notoria para acciones importantes
+                    });
+                });
+
+                // 3. Botones de copia en tarjetas
+                document.querySelectorAll('.copy-button').forEach(button => {
+                    button.addEventListener('click', function () {
+                        vibrate(35); // Vibración media para confirmar copia
+                    });
+                });
+
+                // 4. Botones de día en sección bencina
+                document.querySelectorAll('.day-button').forEach(button => {
+                    button.addEventListener('click', function () {
+                        vibrate(20); // Vibración ligera para cambios de filtro
+                    });
+                });
+
+                // 5. Botón de búsqueda
+                const searchButton = document.querySelector('.search-button');
+                if (searchButton) {
+                    searchButton.addEventListener('click', function () {
+                        vibrate(25);
+                    });
+                }
+
+                // 6. Interacción con la barra de búsqueda
+                const searchBar = document.querySelector('.search-bar');
+                if (searchBar) {
+                    searchBar.addEventListener('focus', function () {
+                        vibrate(15); // Vibración muy ligera al enfocar
+                    });
+                }
+
+                // 7. Banco logos en el carrusel
+                const bankLogos = document.querySelectorAll('.bank-logo');
+                bankLogos.forEach(logo => {
+                    logo.addEventListener('click', function () {
+                        vibrate(20);
+                    });
+                });
+
+                // 8. Filas de tarjetas (opcional - para dar feedback al tocar)
+                const cardRows = document.querySelectorAll('.card-row');
+                cardRows.forEach(row => {
+                    row.addEventListener('click', function (e) {
+                        // Solo vibrar si el clic no fue en el botón de copia
+                        if (!e.target.closest('.copy-button')) {
+                            vibrate(15); // Vibración muy sutil
+                        }
+                    });
+                });
+            }
 
             function preloadAnimations() {
                 const profilePicContainer = document.querySelector('.profile-pic');
@@ -1073,12 +1158,18 @@
                 dayButtons.forEach(button => {
                     button.addEventListener('click', function () {
                         dayButtons.forEach(btn => btn.classList.remove('active'));
+
                         this.classList.add('active');
 
                         const selectedDay = this.getAttribute('data-day');
 
                         gasRows.forEach(row => {
                             const rowDay = row.getAttribute('data-day');
+
+                            // Show the row if:
+                            // 1. "All" (T) is selected, OR
+                            // 2. The row's day matches the selected day, OR
+                            // 3. The row's day is "Todos" (should appear in all filters)
                             if (selectedDay === 'all' || rowDay === selectedDay || rowDay === 'Todos') {
                                 row.classList.remove('hidden');
                             } else {
@@ -1086,7 +1177,6 @@
                             }
                         });
 
-                        // Scroll handling code...
                         const carousel = document.querySelector('.day-carousel');
                         const buttonRect = button.getBoundingClientRect();
                         const carouselRect = carousel.getBoundingClientRect();
@@ -1101,6 +1191,7 @@
                     });
                 });
             }
+
             function initSearchBar() {
                 const searchBar = document.querySelector('.search-bar');
                 if (searchBar) {
@@ -1136,17 +1227,17 @@
                             navigator.clipboard.writeText(cardNumber)
                                 .then(() => {
                                     this.innerHTML = `
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="#4CAF50"/>
-                    </svg>
-                `;
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 16.17L4.83 12L3.41 13.41L9 19L21 7L19.59 5.59L9 16.17Z" fill="#4CAF50"/>
+                </svg>
+            `;
 
                                     setTimeout(() => {
                                         this.innerHTML = `
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="#8888A0"/>
-                        </svg>
-                    `;
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z" fill="#8888A0"/>
+                    </svg>
+                `;
                                     }, 2000);
                                 })
                                 .catch(err => {
@@ -1156,6 +1247,7 @@
                     });
                 });
             }
+
             function initChannelButtons() {
                 const homeButtons = document.querySelectorAll('.channel-buttons button:not(.vip-button)');
                 homeButtons.forEach(button => {
@@ -1186,18 +1278,18 @@
                             const row = document.createElement('div');
                             row.className = 'card-row';
                             row.innerHTML = `
-                        <div class="card-column">${card.banco}</div>
-                        <div class="card-column">${card.tipo}</div>
-                        <div class="card-column">${card.nivel}</div>
-                        <div class="card-column">${card.numeros}</div>
-                        <button class="copy-button">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"
-                                    fill="#8888A0" />
-                            </svg>
-                        </button>
-                    `;
+                <div class="card-column">${card.banco}</div>
+                <div class="card-column">${card.tipo}</div>
+                <div class="card-column">${card.nivel}</div>
+                <div class="card-column">${card.numeros}</div>
+                <button class="copy-button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M16 1H4C2.9 1 2 1.9 2 3V17H4V3H16V1ZM19 5H8C6.9 5 6 5.9 6 7V21C6 22.1 6.9 23 8 23H19C20.1 23 21 22.1 21 21V7C21 5.9 20.1 5 19 5ZM19 21H8V7H19V21Z"
+                            fill="#8888A0" />
+                    </svg>
+                </button>
+            `;
                             cardRowsContainer.appendChild(row);
                         });
 
@@ -1213,11 +1305,11 @@
                             row.className = 'card-row gas-row';
                             row.setAttribute('data-day', item.dia);
                             row.innerHTML = `
-                        <div class="card-column">${item.tarjeta}</div>
-                        <div class="card-column">${item.diaCorto}</div>
-                        <div class="card-column">${item.local}</div>
-                        <div class="card-column">${item.descuento}</div>
-                    `;
+                <div class="card-column">${item.tarjeta}</div>
+                <div class="card-column">${item.diaCorto}</div>
+                <div class="card-column">${item.local}</div>
+                <div class="card-column">${item.descuento}</div>
+            `;
                             gasRowsContainer.appendChild(row);
                         });
 
@@ -1240,8 +1332,10 @@
                 initSearchBar();
                 initCopyButtons();
                 initChannelButtons();
-
                 loadAndRenderData();
+
+                // Añadir vibraciones
+                addVibrationsToAll();
 
                 switchSection('home-section');
 

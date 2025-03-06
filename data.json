@@ -1,0 +1,92 @@
+{
+  "cards": [
+    {
+      "banco": "RIPLEY",
+      "tipo": "VISA",
+      "nivel": "infinity",
+      "numeros": "345678"
+    },
+    {
+      "banco": "BANCO ESTADO",
+      "tipo": "VISA",
+      "nivel": "infinity",
+      "numeros": "345678"
+    },
+    {
+      "banco": "BANCO DE CHILE",
+      "tipo": "MASTERCARD",
+      "nivel": "platinum",
+      "numeros": "567890"
+    },
+    {
+      "banco": "SANTANDER",
+      "tipo": "VISA",
+      "nivel": "platinum",
+      "numeros": "123456"
+    },
+    {
+      "banco": "ITAU",
+      "tipo": "MASTERCARD",
+      "nivel": "black",
+      "numeros": "789012"
+    }
+  ],
+  "bencina": [
+    {
+      "tarjeta": "RIPLEY",
+      "dia": "Lunes",
+      "diaCorto": "LU",
+      "local": "Shell",
+      "descuento": "$150/L"
+    },
+    {
+      "tarjeta": "BANCO ESTADO",
+      "dia": "Lunes",
+      "diaCorto": "LU",
+      "local": "Copec",
+      "descuento": "$120/L"
+    },
+    {
+      "tarjeta": "BANCO DE CHILE",
+      "dia": "Martes",
+      "diaCorto": "MA",
+      "local": "Petrobras",
+      "descuento": "$180/L"
+    },
+    {
+      "tarjeta": "SANTANDER",
+      "dia": "Miércoles",
+      "diaCorto": "MI",
+      "local": "Copec",
+      "descuento": "$200/L"
+    },
+    {
+      "tarjeta": "ITAU",
+      "dia": "Jueves",
+      "diaCorto": "JU",
+      "local": "Shell",
+      "descuento": "$170/L"
+    },
+    {
+      "tarjeta": "RIPLEY",
+      "dia": "Viernes",
+      "diaCorto": "VI",
+      "local": "Shell",
+      "descuento": "$150/L"
+    },
+    {
+      "tarjeta": "BANCO ESTADO",
+      "dia": "Sábado",
+      "diaCorto": "SA",
+      "local": "Copec",
+      "descuento": "$100/L"
+    },
+    {
+      "tarjeta": "BANCO DE CHILE",
+      "dia": "Domingo",
+      "diaCorto": "DO",
+      "local": "Shell",
+      "descuento": "$130/L"
+    }
+  ]
+}

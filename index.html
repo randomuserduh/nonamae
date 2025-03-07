@@ -353,6 +353,7 @@
             border-bottom: 1px solid #242434;
             width: 100%;
             box-sizing: border-box;
+            font-size: 14px;
         }
 
         .card-column {
@@ -527,7 +528,7 @@
 
         .table-header {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr 40px;
+            grid-template-columns: 1.5fr 0.5fr 1fr 1fr 40px;
             padding: 10px 0;
             border-bottom: 1px solid #333343;
             margin-bottom: 10px;
@@ -772,7 +773,7 @@
             <div class="table-header">
                 <span>Banco</span>
                 <span>tipo</span>
-                <span>nivel</span>
+                <!-- <span>nivel</span> -->
                 <span>números</span>
                 <span></span>
             </div>
@@ -849,7 +850,7 @@
             <h2 class="about-us">Sobre nosotros</h2>
             <p>Somos bunnymoney y estamos aquí para traerte ofertas y oportunidades de ahorro. Puedes encontrarnos en
                 nuestro grupo uniéndote a nuestro chat en telegram!</p>
-            <h3 style="color: #040707; font-size: 18px; margin-top: 30px; margin-bottom: 15px;">¡Síguenos!</h3>
+            <h3 style="color: #040707; font-size: 16px; margin-top: 30px; margin-bottom: 15px;">¡Síguenos!</h3>
 
             <div class="social-icons">
                 <a href="https://www.instagram.com/bunnymoney_cl" target=""
@@ -1250,7 +1251,7 @@
                     row.innerHTML = `
                 <div class="card-column">${card.banco}</div>
                 <div class="card-column">${card.tipo}</div>
-                <div class="card-column">${card.nivel}</div>
+
                 <div class="card-column">${card.numeros}</div>
                 <button class="copy-button">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

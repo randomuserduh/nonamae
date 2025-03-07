@@ -1,34 +1,154 @@
 {
     "cards": [
       {
-        "banco": "RIPLEY",
+        "banco": "ESTADO",
         "tipo": "VISA",
-        "nivel": "infinity",
-        "numeros": "345678"
+        "nivel": "CLASSIC",
+        "numeros": "414670"
       },
       {
-        "banco": "BANCO ESTADO",
+        "banco": "ESTADO",
         "tipo": "VISA",
-        "nivel": "infinity",
-        "numeros": "345678"
+        "nivel": "SIGNATURE",
+        "numeros": "434067"
       },
       {
-        "banco": "BANCO DE CHILE",
-        "tipo": "MASTERCARD",
-        "nivel": "platinum",
-        "numeros": "567890"
+        "banco": "ESTADO",
+        "tipo": "VISA",
+        "nivel": "RUT",
+        "numeros": "XXXX"
+      },
+      {
+        "banco": "BCI",
+        "tipo": "VISA",
+        "nivel": "PLATINUM",
+        "numeros": "531663"
+      },
+      {
+        "banco": "BCI",
+        "tipo": "VISA",
+        "nivel": "CLASSIC",
+        "numeros": "454812"
+      },
+      {
+        "banco": "CENCOSUD",
+        "tipo": "MASTER",
+        "nivel": "BLACK",
+        "numeros": "559207"
+      },
+      {
+        "banco": "B.CHILE",
+        "tipo": "VISA",
+        "nivel": "INFINITE",
+        "numeros": "475776"
+      },
+      {
+        "banco": "B.CHILE",
+        "tipo": "VISA",
+        "nivel": "BLACK",
+        "numeros": "522832"
+      },
+      {
+        "banco": "ITAU",
+        "tipo": "MASTER",
+        "nivel": "PLATINUM",
+        "numeros": "554904"
+      },
+      {
+        "banco": "ITAU",
+        "tipo": "MASTER",
+        "nivel": "CLASSIC",
+        "numeros": "543696"
       },
       {
         "banco": "SANTANDER",
         "tipo": "VISA",
-        "nivel": "platinum",
-        "numeros": "123456"
+        "nivel": "SIGNATURE",
+        "numeros": "450881"
       },
       {
-        "banco": "ITAU",
-        "tipo": "MASTERCARD",
-        "nivel": "black",
-        "numeros": "789012"
+        "banco": "SCOTIA",
+        "tipo": "VISA",
+        "nivel": "SIGNATURE",
+        "numeros": "489472"
+      },
+      {
+        "banco": "RIPLEY",
+        "tipo": "MASTER",
+        "nivel": "STANDARD",
+        "numeros": "549070"
+      },
+      {
+        "banco": "BCI LIDER",
+        "tipo": "VISA",
+        "nivel": "STANDARD",
+        "numeros": "441565"
+      },
+      {
+        "banco": "ABCVISA",
+        "tipo": "VISA",
+        "nivel": "STANDARD",
+        "numeros": "456931"
+      },
+      {
+        "banco": "TENPO",
+        "tipo": "MASTER",
+        "nivel": "STANDARD",
+        "numeros": "517608"
+      },
+      {
+        "banco": "COPEC",
+        "tipo": "MASTER",
+        "nivel": "STANDARD",
+        "numeros": "559391"
+      },
+      {
+        "banco": "MACH",
+        "tipo": "VISA",
+        "nivel": "STANDARD",
+        "numeros": "483031"
+      },
+      {
+        "banco": "DALE",
+        "tipo": "MASTER",
+        "nivel": "STANDARD",
+        "numeros": "531926"
+      },
+      {
+        "banco": "BICE",
+        "tipo": "VISA",
+        "nivel": "INFINITE",
+        "numeros": "409320"
+      },
+      {
+        "banco": "BICE",
+        "tipo": "VISA",
+        "nivel": "SIGNATURE",
+        "numeros": "423471"
+      },
+      {
+        "banco": "FALABELLA",
+        "tipo": "MASTER",
+        "nivel": "ELITE",
+        "numeros": "522468"
+      },
+      {
+        "banco": "MERCADOPAGO",
+        "tipo": "MASTER",
+        "nivel": "STANDARD",
+        "numeros": "510869"
+      },
+      {
+        "banco": "FAN",
+        "tipo": "VISA",
+        "nivel": "STANDARD",
+        "numeros": "475774"
+      },
+      {
+        "banco": "TAPP",
+        "tipo": "MASTER",
+        "nivel": "STANDARD",
+        "numeros": "522416"
       }
     ],
     "bencina": [
@@ -54,18 +174,18 @@
         "descuento": "$150/L"
       },
       {
-        "tarjeta": "LA POLAR",
+        "tarjeta": "La Polar",
         "dia": "Jueves",
         "diaCorto": "JU",
         "local": "Petrobras",
         "descuento": "$150/L"
       },
       {
-        "tarjeta": "ITAU",
+        "tarjeta": "Itau",
         "dia": "Viernes",
         "diaCorto": "VI",
         "local": "Petrobras",
-        "descuento": "$170/L"
+        "descuento": "$150/L"
       },
       {
         "tarjeta": "SBPAY",
@@ -75,7 +195,7 @@
         "descuento": "$150/L"
       },
       {
-        "tarjeta": "HITES",
+        "tarjeta": "Hites",
         "dia": "Domingo",
         "diaCorto": "DO",
         "local": "Petrobras",
@@ -95,7 +215,6 @@
         "local": "Petrobras",
         "descuento": "$25/L"
       },
-
       {
         "tarjeta": "Dale",
         "dia": "Lunes",
@@ -129,8 +248,14 @@
         "dia": "Viernes",
         "diaCorto": "VI",
         "local": "Shell",
+        "descuento": "$50/L"
+      },
+      {
+        "tarjeta": "BICE",
+        "dia": "Domingo",
+        "diaCorto": "DO",
+        "local": "Shell",
         "descuento": "$100/L"
       }
-      
     ]
   }

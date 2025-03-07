@@ -773,7 +773,7 @@
             <div class="table-header">
                 <span>Banco</span>
                 <span>tipo</span>
-                <!-- <span>nivel</span> -->
+                <span>nivel</span>
                 <span>números</span>
                 <span></span>
             </div>
@@ -981,20 +981,16 @@
     const bankLogos = document.querySelectorAll('.bank-logo');
     bankLogos.forEach(logo => {
         logo.addEventListener('click', function() {
-            // Obtener el nombre del banco del atributo data-bank
             const bankName = this.getAttribute('data-bank');
             if (!bankName) return;
             
-            // Aplicar filtro en las filas de tarjetas
             const rows = document.querySelectorAll('#cards-section .card-row');
             const searchBar = document.querySelector('.search-bar');
             
-            // Actualizar la barra de búsqueda con el nombre del banco
             if (searchBar) {
                 searchBar.value = bankName;
             }
             
-            // Filtrar las filas
             rows.forEach(row => {
                 const bankColumn = row.querySelector('.card-column:nth-child(1)');
                 if (bankColumn && bankColumn.textContent.toUpperCase().includes(bankName.toUpperCase())) {
@@ -1251,7 +1247,7 @@
                     row.innerHTML = `
                 <div class="card-column">${card.banco}</div>
                 <div class="card-column">${card.tipo}</div>
-
+                <div class="card-column">${card.nivel}</div>
                 <div class="card-column">${card.numeros}</div>
                 <button class="copy-button">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
